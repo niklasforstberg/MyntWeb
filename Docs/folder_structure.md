@@ -19,3 +19,4 @@ src/
 ├── main.tsx
 └── types/             # Shared TypeScript types
     └── index.d.ts
+ 
