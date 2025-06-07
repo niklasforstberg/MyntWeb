@@ -11,6 +11,9 @@ import { AddAssetCard } from '../components/AddAssetCard';
 
 const Dashboard = () => {
   const { userEmail } = useAuth();
+  
+  // Add this debug line temporarily
+  console.log('Dashboard userEmail:', userEmail);
 
   const handleAssetCreated = () => {
     // Handle asset creation - could refresh data, show notification, etc.
