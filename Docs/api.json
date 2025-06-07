@@ -1,194 +1,550 @@
 {
-    "openapi": "3.0.1",
-    "info": {
-      "title": "Mynt",
-      "version": "1.0"
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Mynt",
+    "version": "1.0"
+  },
+  "paths": {
+    "/api/users/by-email/{email}": {
+      "get": {
+        "tags": [
+          "Mynt"
+        ],
+        "parameters": [
+          {
+            "name": "email",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
     },
-    "paths": {
-      "/api/users/by-email/{email}": {
-        "get": {
-          "tags": [
-            "Mynt"
-          ],
-          "parameters": [
-            {
-              "name": "email",
-              "in": "path",
-              "required": true,
+    "/api/auth/login": {
+      "post": {
+        "tags": [
+          "Mynt"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
               "schema": {
-                "type": "string"
+                "$ref": "#/components/schemas/LoginDto"
               }
             }
-          ],
-          "responses": {
-            "200": {
-              "description": "Success"
-            }
-          }
-        }
-      },
-      "/api/auth/login": {
-        "post": {
-          "tags": [
-            "Mynt"
-          ],
-          "requestBody": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/LoginDto"
-                }
-              }
-            },
-            "required": true
           },
-          "responses": {
-            "200": {
-              "description": "Success"
-            }
-          }
-        }
-      },
-      "/api/auth/register": {
-        "post": {
-          "tags": [
-            "Mynt"
-          ],
-          "requestBody": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/RegisterDto"
-                }
-              }
-            },
-            "required": true
-          },
-          "responses": {
-            "200": {
-              "description": "Success"
-            }
-          }
-        }
-      },
-      "/api/auth/setup/first-admin": {
-        "post": {
-          "tags": [
-            "Mynt"
-          ],
-          "requestBody": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CreateAdminDto"
-                }
-              }
-            },
-            "required": true
-          },
-          "responses": {
-            "200": {
-              "description": "Success"
-            }
-          }
-        }
-      },
-      "/api/auth/me": {
-        "get": {
-          "tags": [
-            "Mynt"
-          ],
-          "responses": {
-            "200": {
-              "description": "Success"
-            }
-          }
-        }
-      },
-      "/api/auth/admin/create": {
-        "post": {
-          "tags": [
-            "Mynt"
-          ],
-          "requestBody": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CreateAdminDto"
-                }
-              }
-            },
-            "required": true
-          },
-          "responses": {
-            "200": {
-              "description": "Success"
-            }
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
           }
         }
       }
     },
-    "components": {
-      "schemas": {
-        "CreateAdminDto": {
-          "type": "object",
-          "properties": {
-            "email": {
-              "type": "string",
-              "nullable": true
-            },
-            "password": {
-              "type": "string",
-              "nullable": true
+    "/api/auth/register": {
+      "post": {
+        "tags": [
+          "Mynt"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterDto"
+              }
             }
           },
-          "additionalProperties": false
+          "required": true
         },
-        "LoginDto": {
-          "type": "object",
-          "properties": {
-            "email": {
-              "type": "string",
-              "nullable": true
-            },
-            "password": {
-              "type": "string",
-              "nullable": true
-            }
-          },
-          "additionalProperties": false
-        },
-        "RegisterDto": {
-          "type": "object",
-          "properties": {
-            "email": {
-              "type": "string",
-              "nullable": true
-            },
-            "password": {
-              "type": "string",
-              "nullable": true
-            },
-            "role": {
-              "type": "string",
-              "nullable": true
-            }
-          },
-          "additionalProperties": false
-        }
-      },
-      "securitySchemes": {
-        "Bearer": {
-          "type": "http",
-          "description": "JWT Authorization header using the Bearer scheme. Enter 'Bearer' [space] and then your token in the text input below.",
-          "scheme": "Bearer",
-          "bearerFormat": "JWT"
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
         }
       }
     },
-    "security": [
-      {
-        "Bearer": [ ]
+    "/api/auth/setup/first-admin": {
+      "post": {
+        "tags": [
+          "Mynt"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateAdminDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
       }
-    ]
-  }
+    },
+    "/api/auth/me": {
+      "get": {
+        "tags": [
+          "Mynt"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/auth/admin/create": {
+      "post": {
+        "tags": [
+          "Mynt"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateAdminDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/asset-types": {
+      "get": {
+        "tags": [
+          "Mynt"
+        ],
+        "parameters": [
+          {
+            "name": "lang",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Int32StringBooleanBoolean<>f__AnonymousType1"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Mynt"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AssetTypeCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/assets": {
+      "post": {
+        "tags": [
+          "Mynt"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AssetCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Mynt"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/assets/{id}": {
+      "get": {
+        "tags": [
+          "Mynt"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Mynt"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AssetUpdateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Mynt"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/useractivity": {
+      "post": {
+        "tags": [
+          "User Activity"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserActivityRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/useractivity/{userId}": {
+      "get": {
+        "tags": [
+          "User Activity"
+        ],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 50
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AssetCreateRequest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "financialGroupId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "assetTypeId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AssetTypeCreateRequest": {
+        "type": "object",
+        "properties": {
+          "defaultName": {
+            "type": "string",
+            "nullable": true
+          },
+          "isAsset": {
+            "type": "boolean"
+          },
+          "isPhysical": {
+            "type": "boolean"
+          },
+          "translations": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AssetUpdateRequest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "financialGroupId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "assetTypeId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CreateAdminDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "password": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Int32StringBooleanBoolean<>f__AnonymousType1": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "isAsset": {
+            "type": "boolean"
+          },
+          "isPhysical": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "LoginDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "password": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "RegisterDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "password": {
+            "type": "string",
+            "nullable": true
+          },
+          "role": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "UserActivityAction": {
+        "enum": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "UserActivityRequest": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "action": {
+            "$ref": "#/components/schemas/UserActivityAction"
+          },
+          "details": {
+            "type": "string",
+            "nullable": true
+          },
+          "entityType": {
+            "type": "string",
+            "nullable": true
+          },
+          "entityId": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "securitySchemes": {
+      "Bearer": {
+        "type": "http",
+        "description": "JWT Authorization header using the Bearer scheme. Enter 'Bearer' [space] and then your token in the text input below.",
+        "scheme": "Bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  },
+  "security": [
+    {
+      "Bearer": [ ]
+    }
+  ]
+}

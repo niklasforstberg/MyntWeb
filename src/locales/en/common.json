@@ -1,0 +1,29 @@
+{
+  "navigation": {
+    "dashboard": "Dashboard",
+    "assets": "Assets",
+    "reports": "Reports",
+    "settings": "Settings"
+  },
+  "auth": {
+    "login": "Login",
+    "register": "Register",
+    "email": "Email",
+    "password": "Password",
+    "createAccount": "Create Account"
+  },
+  "assets": {
+    "title": "Assets",
+    "createNew": "Create New Asset",
+    "name": "Name",
+    "description": "Description",
+    "type": "Asset Type",
+    "save": "Save",
+    "cancel": "Cancel"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "success": "Success"
+  }
+} 

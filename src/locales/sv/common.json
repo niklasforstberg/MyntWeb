@@ -1,0 +1,29 @@
+{
+  "navigation": {
+    "dashboard": "Instrumentpanel",
+    "assets": "Tillgångar",
+    "reports": "Rapporter",
+    "settings": "Inställningar"
+  },
+  "auth": {
+    "login": "Logga in",
+    "register": "Registrera",
+    "email": "E-post",
+    "password": "Lösenord",
+    "createAccount": "Skapa konto"
+  },
+  "assets": {
+    "title": "Tillgångar",
+    "createNew": "Skapa ny tillgång",
+    "name": "Namn",
+    "description": "Beskrivning",
+    "type": "Tillgångstyp",
+    "save": "Spara",
+    "cancel": "Avbryt"
+  },
+  "common": {
+    "loading": "Laddar...",
+    "error": "Ett fel uppstod",
+    "success": "Framgång"
+  }
+} 
