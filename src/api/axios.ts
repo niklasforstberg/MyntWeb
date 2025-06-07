@@ -46,4 +46,19 @@ export const getCurrentUser = async () => {
   return response.data;
 };
 
+export const getAssets = async () => {
+  const response = await axiosInstance.get('/api/assets');
+  return response.data;
+};
+
+export const createAsset = async (assetData: {
+  name: string;
+  description?: string;
+  financialGroupId?: number;
+  assetTypeId?: number;
+}) => {
+  const response = await axiosInstance.post('/api/assets', assetData);
+  return response.data;
+};
+
 export default axiosInstance; 
