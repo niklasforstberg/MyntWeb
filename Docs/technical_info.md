@@ -25,7 +25,7 @@
 ## 5. 🎨 navigation
 
 On desktop and tablet, Mynt uses rail navigation.Rail navigation provides a permanent region to navigate between sections, while taking up little screen space.
-In a rail, each destination is represented by a unique icon. When a section is selected, it’s icon becomes brighter and a section title is displayed.
+In a rail, each destination is represented by a unique icon. When a section is selected, it's icon becomes brighter and a section title is displayed.
 When a section is selected, it displays a text label and a brighter color in the rail.
 
 On mobile, Rally uses customized tabs to navigate between sections.
@@ -48,8 +48,8 @@ Secondary: #045D56
 
 ## 8. Typography
 
-Mynt uses Eczar and Roboto Condensed. 
-Most copy is set in Roboto Condensed, though Eczar is used for headlines and lists that only use numbers.
+Mynt uses Lato and Eczar. 
+All text content is set in Lato, while Eczar is used specifically for displaying numbers and numerical data.
 
 
 ## 6. 🔐 Authentication
