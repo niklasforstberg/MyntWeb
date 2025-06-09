@@ -14,7 +14,7 @@ interface Asset {
   id: number;
   name: string;
   description?: string;
-  value?: number; // This might not be in the API yet, but we'll prepare for it
+  currentValue?: number;
   assetTypeId?: number;
   financialGroupId?: number;
 }
@@ -38,6 +38,7 @@ const Dashboard = () => {
     try {
       setLoading(true);
       const data = await getAssets();
+      console.log('Dashboard: Assets fetched:', data);
       setAssets(data);
       setError(null);
     } catch (err) {
@@ -147,7 +148,7 @@ const Dashboard = () => {
                     </Typography>
                     <Box sx={{ mt: 2 }}>
                       <Typography variant="h6" color="primary" sx={{ fontFamily: 'Eczar' }}>
-                        {asset.value ? `$${asset.value.toLocaleString()}` : 'Value not set'}
+                        {asset.currentValue ? `$${asset.currentValue.toLocaleString()}` : 'Value not set'}
                       </Typography>
                     </Box>
                   </CardContent>
