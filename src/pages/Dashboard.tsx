@@ -9,6 +9,7 @@ import {
   ResponsiveGrid, 
   FlexBetween 
 } from '../theme/styled';
+import AssetRow from '../components/AssetCard';
 
 interface Asset {
   id: number;
@@ -131,31 +132,27 @@ const Dashboard = () => {
         )}
 
         {!loading && !error && (
-          <ResponsiveGrid>
+          <Box sx={{ 
+            border: '1px solid',
+            borderColor: 'divider',
+            borderRadius: 1,
+            overflow: 'hidden'
+          }}>
             {assets.length === 0 ? (
-              <Typography color="text.secondary">
+              <Typography color="text.secondary" sx={{ p: 2 }}>
                 No assets found. Click the + button to add your first asset.
               </Typography>
             ) : (
               assets.map((asset) => (
-                <Card key={asset.id} sx={{ minHeight: '120px' }}>
-                  <CardContent>
-                    <Typography variant="h6" gutterBottom>
-                      {asset.name || 'Unnamed Asset'}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary" gutterBottom>
-                      {asset.description || 'No description'}
-                    </Typography>
-                    <Box sx={{ mt: 2 }}>
-                      <Typography variant="h6" color="primary" sx={{ fontFamily: 'Eczar' }}>
-                        {asset.currentValue ? `$${asset.currentValue.toLocaleString()}` : 'Value not set'}
-                      </Typography>
-                    </Box>
-                  </CardContent>
-                </Card>
+                <AssetRow 
+                  key={asset.id} 
+                  asset={asset}
+                  onEdit={(asset) => console.log('Edit:', asset)}
+                  onDelete={(asset) => console.log('Delete:', asset)}
+                />
               ))
             )}
-          </ResponsiveGrid>
+          </Box>
         )}
       </ContentBox>
 
