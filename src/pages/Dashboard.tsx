@@ -1,17 +1,18 @@
-import { Typography, Grid, Button, Card, CardContent, Box, Dialog, DialogTitle, DialogContent, DialogActions, TextField, CircularProgress } from '@mui/material';
+import { Typography, Button } from '@mui/material';
 import { useAuth } from '../auth/useAuth';
 import { useState, useEffect } from 'react';
 import { getAssets, createAsset } from '../api/axios';
 import { 
   PageContainer, 
   ContentBox, 
-  StatsCard, 
-  ResponsiveGrid, 
   FlexBetween 
 } from '../theme/styled';
-import AssetRow from '../components/AssetCard';
+import AccountSummary from '../components/AccountSummary';
+import AccountList from '../components/AccountList';
+import AddAccountForm from '../components/AddAccountForm';
+import { getToken, isTokenValid } from '../auth/AuthContext';
 
-interface Asset {
+interface Account {
   id: number;
   name: string;
   description?: string;
@@ -21,77 +22,68 @@ interface Asset {
 }
 
 const Dashboard = () => {
-  const { userEmail } = useAuth();
-  const [assets, setAssets] = useState<Asset[]>([]);
+  const { userEmail, isAuthenticated } = useAuth();
+  const [accounts, setAccounts] = useState<Account[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [open, setOpen] = useState(false);
+  const [addFormOpen, setAddFormOpen] = useState(false);
   const [creating, setCreating] = useState(false);
-  const [formData, setFormData] = useState({
-    name: '',
-    description: ''
-  });
   
-  // Add this debug line temporarily
-  console.log('Dashboard userEmail:', userEmail);
+  // Debug authentication state
+  console.log('Dashboard - isAuthenticated:', isAuthenticated);
+  console.log('Dashboard - userEmail:', userEmail);
+  console.log('Dashboard - token exists:', !!getToken());
+  console.log('Dashboard - token valid:', isTokenValid());
 
-  const fetchAssets = async () => {
+  const fetchAccounts = async () => {
     try {
       setLoading(true);
       const data = await getAssets();
-      console.log('Dashboard: Assets fetched:', data);
-      setAssets(data);
+      console.log('Dashboard: Accounts fetched:', data);
+      setAccounts(data);
       setError(null);
     } catch (err) {
-      console.error('Error fetching assets:', err);
-      setError('Failed to load assets');
+      console.error('Error fetching accounts:', err);
+      setError('Failed to load accounts');
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchAssets();
+    fetchAccounts();
   }, []);
 
-  const handleOpenDialog = () => {
-    setOpen(true);
-    setFormData({ name: '', description: '' });
-  };
-
-  const handleCloseDialog = () => {
-    setOpen(false);
-    setFormData({ name: '', description: '' });
-  };
-
-  const handleInputChange = (field: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: event.target.value
-    }));
-  };
-
-  const handleCreateAsset = async () => {
-    if (!formData.name.trim()) return;
-
+  const handleAddAccount = async (newAccount: Omit<Account, 'id'>) => {
     try {
       setCreating(true);
-      await createAsset({
-        name: formData.name.trim(),
-        description: formData.description.trim() || undefined
-      });
+      await createAsset(newAccount);
       
-      // Refresh the assets list and close dialog
-      await fetchAssets();
-      handleCloseDialog();
+      // Refresh the accounts list and close form
+      await fetchAccounts();
+      setAddFormOpen(false);
       
-      console.log('Asset created successfully!');
+      console.log('Account created successfully!');
     } catch (err) {
-      console.error('Error creating asset:', err);
+      console.error('Error creating account:', err);
       // You might want to show an error message to the user here
     } finally {
       setCreating(false);
     }
+  };
+
+  const handleEditAccount = (id: number, updatedData: Partial<Account>) => {
+    setAccounts(prev =>
+      prev.map(acc => acc.id === id ? { ...acc, ...updatedData } : acc)
+    );
+    // TODO: Add API call to update account
+    console.log('Edit account:', id, updatedData);
+  };
+
+  const handleDeleteAccount = (id: number) => {
+    setAccounts(prev => prev.filter(acc => acc.id !== id));
+    // TODO: Add API call to delete account
+    console.log('Delete account:', id);
   };
 
   return (
@@ -105,13 +97,18 @@ const Dashboard = () => {
         </Typography>
       </ContentBox>
 
-      {/* Assets Section */}
+      {/* Account Summary Section */}
+      <ContentBox sx={{ mt: 3 }}>
+        <AccountSummary accounts={accounts} />
+      </ContentBox>
+
+      {/* Accounts List Section */}
       <ContentBox sx={{ mt: 3 }}>
         <FlexBetween sx={{ mb: 2 }}>
           <Typography variant="h5">Your Assets</Typography>
           <Button 
             variant="contained" 
-            onClick={handleOpenDialog}
+            onClick={() => setAddFormOpen(true)}
             sx={{ 
               minHeight: '40px',
               fontSize: '18px',
@@ -124,7 +121,7 @@ const Dashboard = () => {
         </FlexBetween>
 
         {loading && (
-          <Typography color="text.secondary">Loading assets...</Typography>
+          <Typography color="text.secondary">Loading accounts...</Typography>
         )}
 
         {error && (
@@ -132,82 +129,21 @@ const Dashboard = () => {
         )}
 
         {!loading && !error && (
-          <Box sx={{ 
-            border: '1px solid',
-            borderColor: 'divider',
-            borderRadius: 1,
-            overflow: 'hidden'
-          }}>
-            {assets.length === 0 ? (
-              <Typography color="text.secondary" sx={{ p: 2 }}>
-                No assets found. Click the + button to add your first asset.
-              </Typography>
-            ) : (
-              assets.map((asset) => (
-                <AssetRow 
-                  key={asset.id} 
-                  asset={asset}
-                  onEdit={(asset) => console.log('Edit:', asset)}
-                  onDelete={(asset) => console.log('Delete:', asset)}
-                />
-              ))
-            )}
-          </Box>
+          <AccountList 
+            accounts={accounts}
+            onEditAccount={handleEditAccount}
+            onDeleteAccount={handleDeleteAccount}
+          />
         )}
       </ContentBox>
 
-      {/* Stats Section */}
-      <ResponsiveGrid sx={{ mt: 3 }}>
-        <StatsCard>
-          <FlexBetween>
-            <Typography variant="h6">Total Assets</Typography>
-            <Typography variant="h4" sx={{ fontFamily: 'Eczar' }}>
-              {assets.length}
-            </Typography>
-          </FlexBetween>
-          <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-            Total number of assets
-          </Typography>
-        </StatsCard>
-        
-      </ResponsiveGrid>
-
-      {/* Create Asset Dialog */}
-      <Dialog open={open} onClose={handleCloseDialog} maxWidth="sm" fullWidth>
-        <DialogTitle>Add New Asset</DialogTitle>
-        <DialogContent>
-          <TextField
-            autoFocus
-            margin="dense"
-            label="Asset Name"
-            fullWidth
-            variant="outlined"
-            value={formData.name}
-            onChange={handleInputChange('name')}
-            sx={{ mb: 2 }}
-          />
-          <TextField
-            margin="dense"
-            label="Description (Optional)"
-            fullWidth
-            multiline
-            rows={3}
-            variant="outlined"
-            value={formData.description}
-            onChange={handleInputChange('description')}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseDialog}>Cancel</Button>
-          <Button 
-            onClick={handleCreateAsset} 
-            variant="contained"
-            disabled={!formData.name.trim() || creating}
-          >
-            {creating ? <CircularProgress size={20} /> : 'Create Asset'}
-          </Button>
-        </DialogActions>
-      </Dialog>
+      {/* Add Account Form */}
+      <AddAccountForm 
+        open={addFormOpen}
+        onClose={() => setAddFormOpen(false)}
+        onAddAccount={handleAddAccount}
+        creating={creating}
+      />
     </PageContainer>
   );
 };

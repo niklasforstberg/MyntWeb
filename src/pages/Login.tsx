@@ -28,7 +28,9 @@ const Login: React.FC = () => {
 
     try {
       const response = await login(email, password);
+      console.log('Login response:', response); // Debug
       setToken(response.token);
+      console.log('Token set, navigating to dashboard...'); // Debug
       setAuthStatus(true);
       navigate('/dashboard');
     } catch (err: any) {

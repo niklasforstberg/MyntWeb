@@ -57,7 +57,9 @@ export const createAsset = async (assetData: {
   financialGroupId?: number;
   assetTypeId?: number;
 }) => {
+  console.log('Sending createAsset request:', assetData); // Debug log
   const response = await axiosInstance.post('/api/assets', assetData);
+  console.log('createAsset response:', response.data); // Debug log
   return response.data;
 };
 
