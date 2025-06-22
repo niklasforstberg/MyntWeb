@@ -43,28 +43,20 @@ const AccountItem = ({ account, onEdit, onDelete }: AccountItemProps) => {
 
   return (
     <>
-      <Box sx={{ 
-        p: 2, 
-        borderBottom: '1px solid',
-        borderColor: 'divider',
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        '&:last-child': { borderBottom: 'none' }
-      }}>
-        <Box>
-          <Typography variant="h6">{account.name}</Typography>
-          {account.description && (
-            <Typography variant="body2" color="text.secondary">
-              {account.description}
-            </Typography>
-          )}
-          {account.currentValue && (
-            <Typography variant="body1" sx={{ fontWeight: 'bold', mt: 0.5 }}>
-              ${account.currentValue.toLocaleString()}
-            </Typography>
-          )}
-        </Box>
+          <Box display="flex" justifyContent="space-between" alignItems="center" width="100%">
+             <Box display="flex" alignItems="baseline" gap={1} flex={1}>
+                <Typography variant="h6">{account.name}</Typography>
+                {account.description && (
+                    <Typography variant="body2" color="text.secondary">
+                        {account.description}
+                    </Typography>
+                )}
+            </Box>
+            {account.currentValue && (
+                <Typography variant="h6" sx={{ fontWeight: 'bold', mr: 2 }}>
+                ${account.currentValue}
+                </Typography>
+            )}
         <Box>
           <IconButton onClick={() => setEditDialogOpen(true)} size="small">
             <Edit />

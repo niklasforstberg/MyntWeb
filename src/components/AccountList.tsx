@@ -26,10 +26,8 @@ const AccountList = ({ accounts, onEditAccount, onDeleteAccount }: AccountListPr
   }
 
   return (
-    <Box sx={{ 
-      border: '1px solid',
+    <Box sx={{
       borderColor: 'divider',
-      borderRadius: 1,
       overflow: 'hidden'
     }}>
       {accounts.map((account) => (
