@@ -1,7 +1,7 @@
 import { Typography, Card, CardContent, Box } from '@mui/material';
 import { StatsCard, FlexBetween } from '../theme/styled';
 
-interface Account {
+interface Asset {
   id: number;
   name: string;
   description?: string;
@@ -10,13 +10,13 @@ interface Account {
   financialGroupId?: number;
 }
 
-interface AccountSummaryProps {
-  accounts: Account[];
+interface AssetSummaryProps {
+  assets: Asset[];
 }
 
-const AccountSummary = ({ accounts }: AccountSummaryProps) => {
-  const totalValue = accounts.reduce((sum, account) => sum + (account.currentValue || 0), 0);
-  const totalAccounts = accounts.length;
+const AssetSummary = ({ assets }: AssetSummaryProps) => {
+  const totalValue = assets.reduce((sum, asset) => sum + (asset.currentValue || 0), 0);
+  const totalAssets = assets.length;
 
   return (
     <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
@@ -24,7 +24,7 @@ const AccountSummary = ({ accounts }: AccountSummaryProps) => {
         <FlexBetween>
           <Typography variant="h6">Total Assets</Typography>
           <Typography variant="h4" sx={{ fontFamily: 'Eczar' }}>
-            {totalAccounts}
+            {totalAssets}
           </Typography>
         </FlexBetween>
         <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
@@ -47,4 +47,4 @@ const AccountSummary = ({ accounts }: AccountSummaryProps) => {
   );
 };
 
-export default AccountSummary; 
+export default AssetSummary; 

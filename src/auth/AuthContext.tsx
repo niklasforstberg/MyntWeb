@@ -8,6 +8,7 @@ interface AuthContextType {
   userRole: string | null;
   logout: () => void;
   setAuthStatus: (status: boolean) => void;
+  isLoading: boolean;
 }
 
 export const AuthContext = createContext<AuthContextType>({
@@ -16,6 +17,7 @@ export const AuthContext = createContext<AuthContextType>({
   userRole: null,
   logout: () => {},
   setAuthStatus: () => {},
+  isLoading: true,
 });
 
 interface AuthProviderProps {
@@ -26,6 +28,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [userRole, setUserRole] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const checkAuth = () => {
@@ -50,6 +53,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         console.log('AuthContext: Token is invalid or missing');
         handleLogout();
       }
+      setIsLoading(false);
     };
 
     checkAuth();
@@ -77,6 +81,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         userRole,
         logout: handleLogout,
         setAuthStatus,
+        isLoading,
       }}
     >
       {children}

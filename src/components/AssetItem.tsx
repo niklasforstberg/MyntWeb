@@ -2,7 +2,7 @@ import { Box, Typography, IconButton, Dialog, DialogTitle, DialogContent, Dialog
 import { Edit, Delete } from '@mui/icons-material';
 import { useState } from 'react';
 
-interface Account {
+interface Asset {
   id: number;
   name: string;
   description?: string;
@@ -11,18 +11,18 @@ interface Account {
   financialGroupId?: number;
 }
 
-interface AccountItemProps {
-  account: Account;
-  onEdit: (updatedData: Partial<Account>) => void;
+interface AssetItemProps {
+  asset: Asset;
+  onEdit: (updatedData: Partial<Asset>) => void;
   onDelete: () => void;
 }
 
-const AccountItem = ({ account, onEdit, onDelete }: AccountItemProps) => {
+const AssetItem = ({ asset, onEdit, onDelete }: AssetItemProps) => {
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [formData, setFormData] = useState({
-    name: account.name,
-    description: account.description || '',
-    currentValue: account.currentValue || 0
+    name: asset.name,
+    description: asset.description || '',
+    currentValue: asset.currentValue || 0
   });
 
   const handleEdit = () => {
@@ -45,16 +45,16 @@ const AccountItem = ({ account, onEdit, onDelete }: AccountItemProps) => {
     <>
           <Box display="flex" justifyContent="space-between" alignItems="center" width="100%">
              <Box display="flex" alignItems="baseline" gap={1} flex={1}>
-                <Typography variant="h6">{account.name}</Typography>
-                {account.description && (
+                <Typography variant="h6">{asset.name}</Typography>
+                {asset.description && (
                     <Typography variant="body2" color="text.secondary">
-                        {account.description}
+                        {asset.description}
                     </Typography>
                 )}
             </Box>
-            {account.currentValue && (
+            {asset.currentValue && (
                 <Typography variant="h6" sx={{ fontWeight: 'bold', mr: 2 }}>
-                ${account.currentValue}
+                ${asset.currentValue}
                 </Typography>
             )}
         <Box>
@@ -112,4 +112,4 @@ const AccountItem = ({ account, onEdit, onDelete }: AccountItemProps) => {
   );
 };
 
-export default AccountItem; 
+export default AssetItem; 

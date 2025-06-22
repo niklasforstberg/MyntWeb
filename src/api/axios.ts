@@ -75,10 +75,28 @@ export const createAsset = async (assetData: {
   description?: string;
   financialGroupId?: number;
   assetTypeId?: number;
+  initialValue?: number;
 }) => {
   console.log('Sending createAsset request:', assetData); // Debug log
   const response = await axiosInstance.post('/api/assets', assetData);
   console.log('createAsset response:', response.data); // Debug log
+  return response.data;
+};
+
+export const createAssetValue = async (assetValueData: {
+  assetId: number;
+  value: number;
+  recordedAt: string;
+}) => {
+  console.log('Sending createAssetValue request:', assetValueData); // Debug log
+  const response = await axiosInstance.post('/api/asset-values', assetValueData);
+  console.log('createAssetValue response:', response.data); // Debug log
+  return response.data;
+};
+
+export const getAssetValues = async (assetId?: number) => {
+  const params = assetId ? { assetId } : {};
+  const response = await axiosInstance.get('/api/asset-values', { params });
   return response.data;
 };
 

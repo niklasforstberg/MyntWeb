@@ -8,7 +8,12 @@ import Dashboard from './pages/Dashboard';
 
 // Protected Route wrapper
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, isLoading } = useAuth();
+  
+  if (isLoading) {
+    return <div>Loading...</div>; // Or a proper loading spinner
+  }
+  
   return isAuthenticated ? <>{children}</> : <Navigate to="/login" replace />;
 };
 

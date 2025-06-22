@@ -1,7 +1,7 @@
 import { Button, Dialog, DialogTitle, DialogContent, DialogActions, TextField, CircularProgress } from '@mui/material';
 import { useState } from 'react';
 
-interface Account {
+interface Asset {
   id: number;
   name: string;
   description?: string;
@@ -10,14 +10,14 @@ interface Account {
   financialGroupId?: number;
 }
 
-interface AddAccountFormProps {
+interface AddAssetFormProps {
   open: boolean;
   onClose: () => void;
-  onAddAccount: (newAccount: Omit<Account, 'id'>) => void;
+  onAddAsset: (newAsset: Omit<Asset, 'id'>) => void;
   creating?: boolean;
 }
 
-const AddAccountForm = ({ open, onClose, onAddAccount, creating = false }: AddAccountFormProps) => {
+const AddAssetForm = ({ open, onClose, onAddAsset, creating = false }: AddAssetFormProps) => {
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -34,7 +34,7 @@ const AddAccountForm = ({ open, onClose, onAddAccount, creating = false }: AddAc
   const handleSubmit = () => {
     if (!formData.name.trim()) return;
 
-    onAddAccount({
+    onAddAsset({
       name: formData.name.trim(),
       description: formData.description.trim() || undefined,
       currentValue: formData.currentValue ? Number(formData.currentValue) : undefined
@@ -98,4 +98,4 @@ const AddAccountForm = ({ open, onClose, onAddAccount, creating = false }: AddAc
   );
 };
 
-export default AddAccountForm; 
+export default AddAssetForm; 

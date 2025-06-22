@@ -7,12 +7,12 @@ import {
   ContentBox, 
   FlexBetween 
 } from '../theme/styled';
-import AccountSummary from '../components/AccountSummary';
-import AccountList from '../components/AccountList';
-import AddAccountForm from '../components/AddAccountForm';
+import AssetSummary from '../components/AssetSummary';
+import AssetList from '../components/AssetList';
+import AddAssetForm from '../components/AddAssetForm';
 import { getToken, isTokenValid } from '../auth/authUtils';
 
-interface Account {
+interface Asset {
   id: number;
   name: string;
   description?: string;
@@ -23,7 +23,7 @@ interface Account {
 
 const Dashboard = () => {
   const { userEmail, isAuthenticated } = useAuth();
-  const [accounts, setAccounts] = useState<Account[]>([]);
+  const [assets, setAssets] = useState<Asset[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [addFormOpen, setAddFormOpen] = useState(false);
@@ -35,23 +35,23 @@ const Dashboard = () => {
   console.log('Dashboard - token exists:', !!getToken());
   console.log('Dashboard - token valid:', isTokenValid());
 
-  const fetchAccounts = async () => {
+  const fetchAssets = async () => {
     try {
       setLoading(true);
       const data = await getAssets();
-      console.log('Dashboard: Accounts fetched:', data);
-      setAccounts(data);
+      console.log('Dashboard: Assets fetched:', data);
+      setAssets(data);
       setError(null);
     } catch (err: any) {
-      console.error('Error fetching accounts:', err);
+      console.error('Error fetching assets:', err);
       // Don't set error state for 500 errors - this is a backend issue
       // Only show error for actual auth/network issues
       if (err.response?.status === 500) {
-        console.log('Backend error (500) - likely database issue, continuing with empty accounts');
-        setAccounts([]);
+        console.log('Backend error (500) - likely database issue, continuing with empty assets');
+        setAssets([]);
         setError(null);
       } else {
-        setError('Failed to load accounts');
+        setError('Failed to load assets');
       }
     } finally {
       setLoading(false);
@@ -59,39 +59,46 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
-    fetchAccounts();
+    fetchAssets();
   }, []);
 
-  const handleAddAccount = async (newAccount: Omit<Account, 'id'>) => {
+  const handleAddAsset = async (newAsset: Omit<Asset, 'id'>) => {
     try {
       setCreating(true);
-      await createAsset(newAccount);
       
-      // Refresh the accounts list and close form
-      await fetchAccounts();
+      await createAsset({
+        name: newAsset.name,
+        description: newAsset.description,
+        assetTypeId: newAsset.assetTypeId,
+        financialGroupId: newAsset.financialGroupId,
+        initialValue: newAsset.currentValue
+      });
+      
+      // Refresh the assets list and close form
+      await fetchAssets();
       setAddFormOpen(false);
       
-      console.log('Account created successfully!');
+      console.log('Asset created successfully!');
     } catch (err) {
-      console.error('Error creating account:', err);
+      console.error('Error creating asset:', err);
       // You might want to show an error message to the user here
     } finally {
       setCreating(false);
     }
   };
 
-  const handleEditAccount = (id: number, updatedData: Partial<Account>) => {
-    setAccounts(prev =>
-      prev.map(acc => acc.id === id ? { ...acc, ...updatedData } : acc)
+  const handleEditAsset = (id: number, updatedData: Partial<Asset>) => {
+    setAssets(prev =>
+      prev.map(asset => asset.id === id ? { ...asset, ...updatedData } : asset)
     );
-    // TODO: Add API call to update account
-    console.log('Edit account:', id, updatedData);
+    // TODO: Add API call to update asset
+    console.log('Edit asset:', id, updatedData);
   };
 
-  const handleDeleteAccount = (id: number) => {
-    setAccounts(prev => prev.filter(acc => acc.id !== id));
-    // TODO: Add API call to delete account
-    console.log('Delete account:', id);
+  const handleDeleteAsset = (id: number) => {
+    setAssets(prev => prev.filter(asset => asset.id !== id));
+    // TODO: Add API call to delete asset
+    console.log('Delete asset:', id);
   };
 
   return (
@@ -105,12 +112,12 @@ const Dashboard = () => {
         </Typography>
       </ContentBox>
 
-      {/* Account Summary Section */}
+      {/* Asset Summary Section */}
       <ContentBox sx={{ mt: 3 }}>
-        <AccountSummary accounts={accounts} />
+        <AssetSummary assets={assets} />
       </ContentBox>
 
-      {/* Accounts List Section */}
+      {/* Assets List Section */}
       <ContentBox sx={{ mt: 3 }}>
         <FlexBetween sx={{ mb: 2 }}>
           <Typography variant="h5">Your Assets</Typography>
@@ -129,7 +136,7 @@ const Dashboard = () => {
         </FlexBetween>
 
         {loading && (
-          <Typography color="text.secondary">Loading accounts...</Typography>
+          <Typography color="text.secondary">Loading assets...</Typography>
         )}
 
         {error && (
@@ -137,19 +144,19 @@ const Dashboard = () => {
         )}
 
         {!loading && !error && (
-          <AccountList 
-            accounts={accounts}
-            onEditAccount={handleEditAccount}
-            onDeleteAccount={handleDeleteAccount}
+          <AssetList 
+            assets={assets}
+            onEditAsset={handleEditAsset}
+            onDeleteAsset={handleDeleteAsset}
           />
         )}
       </ContentBox>
 
-      {/* Add Account Form */}
-      <AddAccountForm 
+      {/* Add Asset Form */}
+      <AddAssetForm 
         open={addFormOpen}
         onClose={() => setAddFormOpen(false)}
-        onAddAccount={handleAddAccount}
+        onAddAsset={handleAddAsset}
         creating={creating}
       />
     </PageContainer>
