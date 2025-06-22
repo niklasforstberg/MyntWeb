@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { getToken } from '../auth/authUtils';
+import { getToken, clearToken } from '../auth/authUtils';
 
 const API_BASE_URL = 'http://localhost:5069';
 
@@ -20,6 +20,25 @@ axiosInstance.interceptors.request.use(
     return config;
   },
   (error) => {
+    return Promise.reject(error);
+  }
+);
+
+// Add response interceptor to handle auth errors
+axiosInstance.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  (error) => {
+    // Handle authentication errors
+    if (error.response?.status === 401 || error.response?.status === 403) {
+      console.log('Authentication error detected, clearing token');
+      clearToken();
+      // Redirect to login if we're not already there
+      if (window.location.pathname !== '/login') {
+        window.location.href = '/login';
+      }
+    }
     return Promise.reject(error);
   }
 );

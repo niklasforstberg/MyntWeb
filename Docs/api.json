@@ -5,28 +5,6 @@
     "version": "1.0"
   },
   "paths": {
-    "/api/users/by-email/{email}": {
-      "get": {
-        "tags": [
-          "Mynt"
-        ],
-        "parameters": [
-          {
-            "name": "email",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        }
-      }
-    },
     "/api/auth/login": {
       "post": {
         "tags": [
@@ -127,6 +105,29 @@
         }
       }
     },
+    "/api/users/by-email/{email}": {
+      "get": {
+        "tags": [
+          "Mynt"
+        ],
+        "parameters": [
+          {
+            "name": "email",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
     "/api/asset-types": {
       "get": {
         "tags": [
@@ -136,6 +137,7 @@
           {
             "name": "lang",
             "in": "query",
+            "style": "form",
             "schema": {
               "type": "string"
             }
@@ -188,6 +190,7 @@
             "name": "id",
             "in": "path",
             "required": true,
+            "style": "simple",
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -219,6 +222,7 @@
             "name": "id",
             "in": "path",
             "required": true,
+            "style": "simple",
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -227,6 +231,7 @@
           {
             "name": "lang",
             "in": "query",
+            "style": "form",
             "schema": {
               "type": "string"
             }
@@ -281,6 +286,7 @@
             "name": "id",
             "in": "path",
             "required": true,
+            "style": "simple",
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -302,6 +308,7 @@
             "name": "id",
             "in": "path",
             "required": true,
+            "style": "simple",
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -333,6 +340,7 @@
             "name": "id",
             "in": "path",
             "required": true,
+            "style": "simple",
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -375,6 +383,7 @@
           {
             "name": "assetId",
             "in": "query",
+            "style": "form",
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -398,6 +407,7 @@
             "name": "id",
             "in": "path",
             "required": true,
+            "style": "simple",
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -419,6 +429,7 @@
             "name": "id",
             "in": "path",
             "required": true,
+            "style": "simple",
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -450,6 +461,7 @@
             "name": "id",
             "in": "path",
             "required": true,
+            "style": "simple",
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -473,6 +485,7 @@
             "name": "assetId",
             "in": "path",
             "required": true,
+            "style": "simple",
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -518,6 +531,7 @@
             "name": "userId",
             "in": "path",
             "required": true,
+            "style": "simple",
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -526,6 +540,7 @@
           {
             "name": "limit",
             "in": "query",
+            "style": "form",
             "schema": {
               "type": "integer",
               "format": "int32",
@@ -850,7 +865,7 @@
   },
   "security": [
     {
-      "Bearer": [ ]
+      "Bearer": []
     }
   ]
 }

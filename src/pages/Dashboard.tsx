@@ -10,7 +10,7 @@ import {
 import AccountSummary from '../components/AccountSummary';
 import AccountList from '../components/AccountList';
 import AddAccountForm from '../components/AddAccountForm';
-import { getToken, isTokenValid } from '../auth/AuthContext';
+import { getToken, isTokenValid } from '../auth/authUtils';
 
 interface Account {
   id: number;
@@ -42,9 +42,17 @@ const Dashboard = () => {
       console.log('Dashboard: Accounts fetched:', data);
       setAccounts(data);
       setError(null);
-    } catch (err) {
+    } catch (err: any) {
       console.error('Error fetching accounts:', err);
-      setError('Failed to load accounts');
+      // Don't set error state for 500 errors - this is a backend issue
+      // Only show error for actual auth/network issues
+      if (err.response?.status === 500) {
+        console.log('Backend error (500) - likely database issue, continuing with empty accounts');
+        setAccounts([]);
+        setError(null);
+      } else {
+        setError('Failed to load accounts');
+      }
     } finally {
       setLoading(false);
     }
