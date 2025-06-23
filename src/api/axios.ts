@@ -100,4 +100,9 @@ export const getAssetValues = async (assetId?: number) => {
   return response.data;
 };
 
+export const getAssetTypes = async () => {
+  const response = await axiosInstance.get('/api/asset-types');
+  return response.data;
+};
+
 export default axiosInstance; 

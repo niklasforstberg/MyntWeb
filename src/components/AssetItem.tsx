@@ -1,6 +1,7 @@
-import { Box, Typography, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button } from '@mui/material';
+import { Box, Typography, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 import { Edit, Delete } from '@mui/icons-material';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { getAssetTypes } from '../api/axios';
 
 interface Asset {
   id: number;
@@ -9,6 +10,13 @@ interface Asset {
   currentValue?: number;
   assetTypeId?: number;
   financialGroupId?: number;
+}
+
+interface AssetType {
+  id: number;
+  name: string;
+  isAsset: boolean;
+  isPhysical: boolean;
 }
 
 interface AssetItemProps {
@@ -22,14 +30,36 @@ const AssetItem = ({ asset, onEdit, onDelete }: AssetItemProps) => {
   const [formData, setFormData] = useState({
     name: asset.name,
     description: asset.description || '',
-    currentValue: asset.currentValue || 0
+    currentValue: asset.currentValue || 0,
+    assetTypeId: asset.assetTypeId || ''
   });
+  const [assetTypes, setAssetTypes] = useState<AssetType[]>([]);
+  const [loadingAssetTypes, setLoadingAssetTypes] = useState(false);
+
+  const loadAssetTypes = async () => {
+    try {
+      setLoadingAssetTypes(true);
+      const data = await getAssetTypes();
+      setAssetTypes(data);
+    } catch (error) {
+      console.error('Error loading asset types:', error);
+    } finally {
+      setLoadingAssetTypes(false);
+    }
+  };
+
+  useEffect(() => {
+    if (editDialogOpen) {
+      loadAssetTypes();
+    }
+  }, [editDialogOpen]);
 
   const handleEdit = () => {
     onEdit({
       name: formData.name,
       description: formData.description || undefined,
-      currentValue: formData.currentValue
+      currentValue: formData.currentValue,
+      assetTypeId: formData.assetTypeId ? Number(formData.assetTypeId) : undefined
     });
     setEditDialogOpen(false);
   };
@@ -38,6 +68,13 @@ const AssetItem = ({ asset, onEdit, onDelete }: AssetItemProps) => {
     setFormData(prev => ({
       ...prev,
       [field]: field === 'currentValue' ? Number(event.target.value) : event.target.value
+    }));
+  };
+
+  const handleSelectChange = (field: string) => (event: any) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: event.target.value
     }));
   };
 
@@ -80,6 +117,26 @@ const AssetItem = ({ asset, onEdit, onDelete }: AssetItemProps) => {
             onChange={handleInputChange('name')}
             sx={{ mb: 2 }}
           />
+          
+          <FormControl fullWidth sx={{ mb: 2 }}>
+            <InputLabel>Asset Type</InputLabel>
+            <Select
+              value={formData.assetTypeId}
+              label="Asset Type"
+              onChange={handleSelectChange('assetTypeId')}
+              disabled={loadingAssetTypes}
+            >
+              <MenuItem value="">
+                <em>Select an asset type</em>
+              </MenuItem>
+              {assetTypes.map((type) => (
+                <MenuItem key={type.id} value={type.id}>
+                  {type.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+
           <TextField
             margin="dense"
             label="Description (Optional)"
