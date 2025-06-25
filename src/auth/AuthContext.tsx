@@ -60,7 +60,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }, []);
 
   const handleLogout = () => {
-    clearToken();
+    localStorage.removeItem('token');
     setIsAuthenticated(false);
     setUserEmail(null);
     setUserRole(null);
