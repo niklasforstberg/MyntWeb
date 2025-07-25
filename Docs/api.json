@@ -128,6 +128,50 @@
         }
       }
     },
+    "/api/users/me": {
+      "get": {
+        "tags": [
+          "Mynt"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/users/settings": {
+      "put": {
+        "tags": [
+          "Mynt"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserSettingsRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Mynt"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
     "/api/asset-types": {
       "get": {
         "tags": [
@@ -583,6 +627,13 @@
             "format": "int32",
             "nullable": true
           },
+          "currencyCode": {
+            "maxLength": 3,
+            "minLength": 0,
+            "type": "string",
+            "description": "The currency code for this asset",
+            "nullable": true
+          },
           "initialValue": {
             "type": "number",
             "description": "Optional initial value of the asset. If provided, will create an initial AssetValue record.",
@@ -706,6 +757,13 @@
             "type": "integer",
             "description": "The ID of the asset type",
             "format": "int32",
+            "nullable": true
+          },
+          "currencyCode": {
+            "maxLength": 3,
+            "minLength": 0,
+            "type": "string",
+            "description": "The currency code for this asset",
             "nullable": true
           }
         },
@@ -858,6 +916,18 @@
           }
         },
         "additionalProperties": false
+      },
+      "UserSettingsRequest": {
+        "type": "object",
+        "properties": {
+          "preferredCurrency": {
+            "type": "string",
+            "description": "The user's preferred currency code (e.g., \"USD\", \"EUR\", \"SEK\")",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "DTO for updating user settings"
       }
     },
     "securitySchemes": {

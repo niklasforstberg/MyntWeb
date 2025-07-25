@@ -1,7 +1,7 @@
 import { Typography, Button } from '@mui/material';
 import { useAuth } from '../auth/useAuth';
 import { useState, useEffect } from 'react';
-import { getAssets, createAsset } from '../api/axios';
+import { getAssets, createAsset, updateAsset, deleteAsset } from '../api/axios';
 import { 
   PageContainer, 
   ContentBox, 
@@ -19,6 +19,7 @@ interface Asset {
   currentValue?: number;
   assetTypeId?: number;
   financialGroupId?: number;
+  currencyCode?: string;
 }
 
 const Dashboard = () => {
@@ -71,6 +72,7 @@ const Dashboard = () => {
         description: newAsset.description,
         assetTypeId: newAsset.assetTypeId,
         financialGroupId: newAsset.financialGroupId,
+        currencyCode: newAsset.currencyCode,
         initialValue: newAsset.currentValue
       });
       
@@ -87,18 +89,34 @@ const Dashboard = () => {
     }
   };
 
-  const handleEditAsset = (id: number, updatedData: Partial<Asset>) => {
-    setAssets(prev =>
-      prev.map(asset => asset.id === id ? { ...asset, ...updatedData } : asset)
-    );
-    // TODO: Add API call to update asset
-    console.log('Edit asset:', id, updatedData);
+  const handleEditAsset = async (id: number, updatedData: Partial<Asset>) => {
+    try {
+      await updateAsset(id, {
+        name: updatedData.name,
+        description: updatedData.description,
+        assetTypeId: updatedData.assetTypeId,
+        financialGroupId: updatedData.financialGroupId,
+        currencyCode: updatedData.currencyCode
+      });
+      
+      // Refresh the assets list to get the updated data
+      await fetchAssets();
+    } catch (err) {
+      console.error('Error updating asset:', err);
+      // You might want to show an error message to the user here
+    }
   };
 
-  const handleDeleteAsset = (id: number) => {
-    setAssets(prev => prev.filter(asset => asset.id !== id));
-    // TODO: Add API call to delete asset
-    console.log('Delete asset:', id);
+  const handleDeleteAsset = async (id: number) => {
+    try {
+      await deleteAsset(id);
+      
+      // Refresh the assets list to get the updated data
+      await fetchAssets();
+    } catch (err) {
+      console.error('Error deleting asset:', err);
+      // You might want to show an error message to the user here
+    }
   };
 
   return (

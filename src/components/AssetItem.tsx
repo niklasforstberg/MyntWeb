@@ -1,23 +1,7 @@
 import { Box, Typography, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
-import { Edit, Delete } from '@mui/icons-material';
-import { useState, useEffect } from 'react';
-import { getAssetTypes } from '../api/axios';
-
-interface Asset {
-  id: number;
-  name: string;
-  description?: string;
-  currentValue?: number;
-  assetTypeId?: number;
-  financialGroupId?: number;
-}
-
-interface AssetType {
-  id: number;
-  name: string;
-  isAsset: boolean;
-  isPhysical: boolean;
-}
+import { useState } from 'react';
+import { useAssetTypes, type AssetType } from '../hooks/useAssetTypes';
+import type { Asset } from '../hooks/useAssets';
 
 interface AssetItemProps {
   asset: Asset;
@@ -31,35 +15,20 @@ const AssetItem = ({ asset, onEdit, onDelete }: AssetItemProps) => {
     name: asset.name,
     description: asset.description || '',
     currentValue: asset.currentValue || 0,
-    assetTypeId: asset.assetTypeId || ''
+    assetTypeId: asset.assetTypeId ? String(asset.assetTypeId) : '',
+    currencyCode: asset.currencyCode || ''
   });
-  const [assetTypes, setAssetTypes] = useState<AssetType[]>([]);
-  const [loadingAssetTypes, setLoadingAssetTypes] = useState(false);
-
-  const loadAssetTypes = async () => {
-    try {
-      setLoadingAssetTypes(true);
-      const data = await getAssetTypes();
-      setAssetTypes(data);
-    } catch (error) {
-      console.error('Error loading asset types:', error);
-    } finally {
-      setLoadingAssetTypes(false);
-    }
-  };
-
-  useEffect(() => {
-    if (editDialogOpen) {
-      loadAssetTypes();
-    }
-  }, [editDialogOpen]);
+  
+  // TanStack Query hook for asset types
+  const { data: assetTypes = [], isLoading: loadingAssetTypes } = useAssetTypes();
 
   const handleEdit = () => {
     onEdit({
       name: formData.name,
       description: formData.description || undefined,
       currentValue: formData.currentValue,
-      assetTypeId: formData.assetTypeId ? Number(formData.assetTypeId) : undefined
+      assetTypeId: formData.assetTypeId ? Number(formData.assetTypeId) : undefined,
+      currencyCode: formData.currencyCode || undefined
     });
     setEditDialogOpen(false);
   };
@@ -82,7 +51,16 @@ const AssetItem = ({ asset, onEdit, onDelete }: AssetItemProps) => {
     <>
           <Box display="flex" justifyContent="space-between" alignItems="center" width="100%">
              <Box display="flex" alignItems="baseline" gap={1} flex={1}>
-                <Typography variant="h6">{asset.name}</Typography>
+                <Typography 
+                  variant="h6" 
+                  onClick={() => setEditDialogOpen(true)}
+                  sx={{ 
+                    cursor: 'pointer',
+                    '&:hover': { textDecoration: 'underline' }
+                  }}
+                >
+                  {asset.name}
+                </Typography>
                 {asset.description && (
                     <Typography variant="body2" color="text.secondary">
                         {asset.description}
@@ -91,16 +69,10 @@ const AssetItem = ({ asset, onEdit, onDelete }: AssetItemProps) => {
             </Box>
             {asset.currentValue && (
                 <Typography variant="h6" sx={{ fontWeight: 'bold', mr: 2 }}>
-                ${asset.currentValue}
+                {asset.currencyCode || 'USD'} {asset.currentValue}
                 </Typography>
             )}
         <Box>
-          <IconButton onClick={() => setEditDialogOpen(true)} size="small">
-            <Edit />
-          </IconButton>
-          <IconButton onClick={onDelete} size="small" color="error">
-            <Delete />
-          </IconButton>
         </Box>
       </Box>
 
@@ -129,7 +101,7 @@ const AssetItem = ({ asset, onEdit, onDelete }: AssetItemProps) => {
               <MenuItem value="">
                 <em>Select an asset type</em>
               </MenuItem>
-              {assetTypes.map((type) => (
+              {assetTypes.map((type: AssetType) => (
                 <MenuItem key={type.id} value={type.id}>
                   {type.name}
                 </MenuItem>
@@ -156,9 +128,37 @@ const AssetItem = ({ asset, onEdit, onDelete }: AssetItemProps) => {
             variant="outlined"
             value={formData.currentValue}
             onChange={handleInputChange('currentValue')}
+            sx={{ mb: 2 }}
           />
+          
+          <FormControl fullWidth>
+            <InputLabel>Currency</InputLabel>
+            <Select
+              value={formData.currencyCode}
+              label="Currency"
+              onChange={handleSelectChange('currencyCode')}
+            >
+              <MenuItem value="">
+                <em>Select currency</em>
+              </MenuItem>
+              <MenuItem value="USD">USD - US Dollar</MenuItem>
+              <MenuItem value="EUR">EUR - Euro</MenuItem>
+              <MenuItem value="SEK">SEK - Swedish Krona</MenuItem>
+              <MenuItem value="GBP">GBP - British Pound</MenuItem>
+              <MenuItem value="JPY">JPY - Japanese Yen</MenuItem>
+              <MenuItem value="CAD">CAD - Canadian Dollar</MenuItem>
+              <MenuItem value="AUD">AUD - Australian Dollar</MenuItem>
+              <MenuItem value="CHF">CHF - Swiss Franc</MenuItem>
+              <MenuItem value="CNY">CNY - Chinese Yuan</MenuItem>
+              <MenuItem value="NOK">NOK - Norwegian Krone</MenuItem>
+              <MenuItem value="DKK">DKK - Danish Krone</MenuItem>
+            </Select>
+          </FormControl>
         </DialogContent>
         <DialogActions>
+          <Button onClick={onDelete} color="error" sx={{ mr: 'auto' }}>
+            Delete Asset
+          </Button>
           <Button onClick={() => setEditDialogOpen(false)}>Cancel</Button>
           <Button onClick={handleEdit} variant="contained">
             Save Changes

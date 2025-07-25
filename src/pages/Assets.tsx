@@ -1,75 +1,51 @@
 import { Typography, Button } from '@mui/material';
-import { useState, useEffect } from 'react';
-import { getAssets, createAsset } from '../api/axios';
+import { useState } from 'react';
 import { ContentBox, FlexBetween } from '../theme/styled';
 import AssetList from '../components/AssetList';
 import AddAssetForm from '../components/AddAssetForm';
-
-interface Asset {
-  id: number;
-  name: string;
-  description?: string;
-  currentValue?: number;
-  assetTypeId?: number;
-  financialGroupId?: number;
-}
+import { useAssets } from '../hooks/useAssets';
+import { useCreateAsset, useUpdateAsset, useDeleteAsset } from '../hooks/useAssetMutations';
+import type { Asset } from '../hooks/useAssets';
 
 const Assets = () => {
-  const [assets, setAssets] = useState<Asset[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [addFormOpen, setAddFormOpen] = useState(false);
-  const [creating, setCreating] = useState(false);
-
-  const fetchAssets = async () => {
-    try {
-      setLoading(true);
-      const data = await getAssets();
-      setAssets(data);
-      setError(null);
-    } catch (err: any) {
-      if (err.response?.status === 500) {
-        setAssets([]);
-        setError(null);
-      } else {
-        setError('Failed to load assets');
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchAssets();
-  }, []);
+  
+  // TanStack Query hooks
+  const { data: assets = [], isLoading, error } = useAssets();
+  const createAssetMutation = useCreateAsset();
+  const updateAssetMutation = useUpdateAsset();
+  const deleteAssetMutation = useDeleteAsset();
 
   const handleAddAsset = async (newAsset: Omit<Asset, 'id'>) => {
     try {
-      setCreating(true);
-      await createAsset({
+      await createAssetMutation.mutateAsync({
         name: newAsset.name,
         description: newAsset.description,
         assetTypeId: newAsset.assetTypeId,
         financialGroupId: newAsset.financialGroupId,
+        currencyCode: newAsset.currencyCode,
         initialValue: newAsset.currentValue
       });
-      await fetchAssets();
       setAddFormOpen(false);
     } catch (err) {
       console.error('Error creating asset:', err);
-    } finally {
-      setCreating(false);
     }
   };
 
-  const handleEditAsset = (id: number, updatedData: Partial<Asset>) => {
-    setAssets(prev =>
-      prev.map(asset => asset.id === id ? { ...asset, ...updatedData } : asset)
-    );
+  const handleEditAsset = async (id: number, updatedData: Partial<Asset>) => {
+    try {
+      await updateAssetMutation.mutateAsync({ id, data: updatedData });
+    } catch (err) {
+      console.error('Error updating asset:', err);
+    }
   };
 
-  const handleDeleteAsset = (id: number) => {
-    setAssets(prev => prev.filter(asset => asset.id !== id));
+  const handleDeleteAsset = async (id: number) => {
+    try {
+      await deleteAssetMutation.mutateAsync(id);
+    } catch (err) {
+      console.error('Error deleting asset:', err);
+    }
   };
 
   return (
@@ -91,15 +67,15 @@ const Assets = () => {
           </Button>
         </FlexBetween>
 
-        {loading && (
+        {isLoading && (
           <Typography color="text.secondary">Loading assets...</Typography>
         )}
 
         {error && (
-          <Typography color="error">{error}</Typography>
+          <Typography color="error">{error.message}</Typography>
         )}
 
-        {!loading && !error && (
+        {!isLoading && !error && (
           <AssetList 
             assets={assets}
             onEditAsset={handleEditAsset}
@@ -112,7 +88,7 @@ const Assets = () => {
         open={addFormOpen}
         onClose={() => setAddFormOpen(false)}
         onAddAsset={handleAddAsset}
-        creating={creating}
+        creating={createAssetMutation.isPending}
       />
     </>
   );

@@ -8,6 +8,7 @@ interface Asset {
   currentValue?: number;
   assetTypeId?: number;
   financialGroupId?: number;
+  currencyCode?: string;
 }
 
 interface AssetSummaryProps {
@@ -36,7 +37,7 @@ const AssetSummary = ({ assets }: AssetSummaryProps) => {
         <FlexBetween>
           <Typography variant="h6">Total Value</Typography>
           <Typography variant="h4" sx={{ fontFamily: 'Eczar' }}>
-            ${totalValue.toLocaleString()}
+            USD {totalValue.toLocaleString()}
           </Typography>
         </FlexBetween>
         <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>

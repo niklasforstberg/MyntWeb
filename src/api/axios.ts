@@ -75,11 +75,32 @@ export const createAsset = async (assetData: {
   description?: string;
   financialGroupId?: number;
   assetTypeId?: number;
+  currencyCode?: string;
   initialValue?: number;
 }) => {
   console.log('Sending createAsset request:', assetData); // Debug log
   const response = await axiosInstance.post('/api/assets', assetData);
   console.log('createAsset response:', response.data); // Debug log
+  return response.data;
+};
+
+export const updateAsset = async (id: number, assetData: {
+  name?: string;
+  description?: string;
+  financialGroupId?: number;
+  assetTypeId?: number;
+  currencyCode?: string;
+}) => {
+  console.log('Sending updateAsset request:', { id, assetData }); // Debug log
+  const response = await axiosInstance.put(`/api/assets/${id}`, assetData);
+  console.log('updateAsset response:', response.data); // Debug log
+  return response.data;
+};
+
+export const deleteAsset = async (id: number) => {
+  console.log('Sending deleteAsset request:', id); // Debug log
+  const response = await axiosInstance.delete(`/api/assets/${id}`);
+  console.log('deleteAsset response:', response.data); // Debug log
   return response.data;
 };
 

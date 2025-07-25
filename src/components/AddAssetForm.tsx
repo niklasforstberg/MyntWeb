@@ -10,6 +10,7 @@ interface Asset {
   currentValue?: number;
   assetTypeId?: number;
   financialGroupId?: number;
+  currencyCode?: string;
 }
 
 interface AssetType {
@@ -31,7 +32,8 @@ const AddAssetForm = ({ open, onClose, onAddAsset, creating = false }: AddAssetF
     name: '',
     description: '',
     currentValue: '',
-    assetTypeId: ''
+    assetTypeId: '',
+    currencyCode: ''
   });
   const [assetTypes, setAssetTypes] = useState<AssetType[]>([]);
   const [loadingAssetTypes, setLoadingAssetTypes] = useState(false);
@@ -75,15 +77,16 @@ const AddAssetForm = ({ open, onClose, onAddAsset, creating = false }: AddAssetF
       name: formData.name.trim(),
       description: formData.description.trim() || undefined,
       currentValue: formData.currentValue ? Number(formData.currentValue) : undefined,
-      assetTypeId: formData.assetTypeId ? Number(formData.assetTypeId) : undefined
+      assetTypeId: formData.assetTypeId ? Number(formData.assetTypeId) : undefined,
+      currencyCode: formData.currencyCode || undefined
     });
 
     // Reset form
-    setFormData({ name: '', description: '', currentValue: '', assetTypeId: '' });
+    setFormData({ name: '', description: '', currentValue: '', assetTypeId: '', currencyCode: '' });
   };
 
   const handleClose = () => {
-    setFormData({ name: '', description: '', currentValue: '', assetTypeId: '' });
+    setFormData({ name: '', description: '', currentValue: '', assetTypeId: '', currencyCode: '' });
     onClose();
   };
 
@@ -140,7 +143,32 @@ const AddAssetForm = ({ open, onClose, onAddAsset, creating = false }: AddAssetF
           variant="outlined"
           value={formData.currentValue}
           onChange={handleInputChange('currentValue')}
+          sx={{ mb: 2 }}
         />
+        
+        <FormControl fullWidth>
+          <InputLabel>Currency</InputLabel>
+          <Select
+            value={formData.currencyCode}
+            label="Currency"
+            onChange={handleSelectChange('currencyCode')}
+          >
+            <MenuItem value="">
+              <em>Select currency</em>
+            </MenuItem>
+            <MenuItem value="USD">USD - US Dollar</MenuItem>
+            <MenuItem value="EUR">EUR - Euro</MenuItem>
+            <MenuItem value="SEK">SEK - Swedish Krona</MenuItem>
+            <MenuItem value="GBP">GBP - British Pound</MenuItem>
+            <MenuItem value="JPY">JPY - Japanese Yen</MenuItem>
+            <MenuItem value="CAD">CAD - Canadian Dollar</MenuItem>
+            <MenuItem value="AUD">AUD - Australian Dollar</MenuItem>
+            <MenuItem value="CHF">CHF - Swiss Franc</MenuItem>
+            <MenuItem value="CNY">CNY - Chinese Yuan</MenuItem>
+            <MenuItem value="NOK">NOK - Norwegian Krone</MenuItem>
+            <MenuItem value="DKK">DKK - Danish Krone</MenuItem>
+          </Select>
+        </FormControl>
       </DialogContent>
       <DialogActions>
         <Button onClick={handleClose}>Cancel</Button>

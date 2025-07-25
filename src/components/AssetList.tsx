@@ -1,14 +1,6 @@
 import { Box, Typography } from '@mui/material';
 import AssetItem from './AssetItem';
-
-interface Asset {
-  id: number;
-  name: string;
-  description?: string;
-  currentValue?: number;
-  assetTypeId?: number;
-  financialGroupId?: number;
-}
+import type { Asset } from '../hooks/useAssets';
 
 interface AssetListProps {
   assets: Asset[];
