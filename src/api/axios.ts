@@ -137,4 +137,9 @@ export const getAssetTypes = async () => {
   return response.data;
 };
 
+export const getCurrencies = async () => {
+  const response = await axiosInstance.get('/api/currencies');
+  return response.data;
+};
+
 export default axiosInstance; 
