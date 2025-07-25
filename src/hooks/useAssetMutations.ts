@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { createAsset, updateAsset, deleteAsset } from '../api/axios';
+import { createAsset, updateAsset, deleteAsset, updateAssetValue } from '../api/axios';
 import type { Asset } from './useAssets';
 
 export const useCreateAsset = () => {
@@ -18,8 +18,15 @@ export const useUpdateAsset = () => {
   const queryClient = useQueryClient();
   
   return useMutation({
-    mutationFn: ({ id, data }: { id: number; data: Partial<Asset> }) => 
-      updateAsset(id, data),
+    mutationFn: async ({ id, data, currentValue }: { id: number; data: Partial<Asset>; currentValue?: number }) => {
+      // Update asset details
+      await updateAsset(id, data);
+      
+      // Update asset value if provided
+      if (currentValue !== undefined) {
+        await updateAssetValue(id, currentValue);
+      }
+    },
     onSuccess: () => {
       // Invalidate and refetch assets list
       queryClient.invalidateQueries({ queryKey: ['assets'] });

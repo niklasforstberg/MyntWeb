@@ -34,7 +34,12 @@ const Assets = () => {
 
   const handleEditAsset = async (id: number, updatedData: Partial<Asset>) => {
     try {
-      await updateAssetMutation.mutateAsync({ id, data: updatedData });
+      const { currentValue, ...assetData } = updatedData;
+      await updateAssetMutation.mutateAsync({ 
+        id, 
+        data: assetData,
+        currentValue: currentValue
+      });
     } catch (err) {
       console.error('Error updating asset:', err);
     }

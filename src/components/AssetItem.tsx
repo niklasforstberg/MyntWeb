@@ -22,15 +22,20 @@ const AssetItem = ({ asset, onEdit, onDelete }: AssetItemProps) => {
   // TanStack Query hook for asset types
   const { data: assetTypes = [], isLoading: loadingAssetTypes } = useAssetTypes();
 
-  const handleEdit = () => {
-    onEdit({
-      name: formData.name,
-      description: formData.description || undefined,
-      currentValue: formData.currentValue,
-      assetTypeId: formData.assetTypeId ? Number(formData.assetTypeId) : undefined,
-      currencyCode: formData.currencyCode || undefined
-    });
-    setEditDialogOpen(false);
+  const handleEdit = async () => {
+    try {
+      await onEdit({
+        name: formData.name,
+        description: formData.description || undefined,
+        currentValue: formData.currentValue,
+        assetTypeId: formData.assetTypeId ? Number(formData.assetTypeId) : undefined,
+        currencyCode: formData.currencyCode || undefined
+      });
+      setEditDialogOpen(false);
+    } catch (error) {
+      console.error('Failed to update asset:', error);
+      // Keep dialog open on error so user can see the error and try again
+    }
   };
 
   const handleInputChange = (field: string) => (event: React.ChangeEvent<HTMLInputElement>) => {

@@ -115,6 +115,17 @@ export const createAssetValue = async (assetValueData: {
   return response.data;
 };
 
+export const updateAssetValue = async (assetId: number, value: number) => {
+  console.log('Sending updateAssetValue request:', { assetId, value }); // Debug log
+  const response = await axiosInstance.post('/api/asset-values', { 
+    assetId,
+    value,
+    recordedAt: new Date().toISOString()
+  });
+  console.log('updateAssetValue response:', response.data); // Debug log
+  return response.data;
+};
+
 export const getAssetValues = async (assetId?: number) => {
   const params = assetId ? { assetId } : {};
   const response = await axiosInstance.get('/api/asset-values', { params });
