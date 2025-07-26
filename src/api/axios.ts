@@ -142,4 +142,14 @@ export const getCurrencies = async () => {
   return response.data;
 };
 
+export const getUserSettings = async () => {
+  const response = await axiosInstance.get('/api/users/settings');
+  return response.data;
+};
+
+export const updateUserSettings = async (settings: { preferredCurrency?: string }) => {
+  const response = await axiosInstance.put('/api/users/settings', settings);
+  return response.data;
+};
+
 export default axiosInstance; 

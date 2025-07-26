@@ -288,6 +288,137 @@
         }
       }
     },
+    "/api/currencies": {
+      "get": {
+        "tags": [
+          "Mynt"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Mynt"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CurrencyCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/currencies/{code}": {
+      "get": {
+        "tags": [
+          "Mynt"
+        ],
+        "parameters": [
+          {
+            "name": "code",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/currencies/exchange-rates": {
+      "post": {
+        "tags": [
+          "Mynt"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CurrencyExchangeRateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/currencies/convert": {
+      "post": {
+        "tags": [
+          "Mynt"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CurrencyConversionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/currencies/{fromCode}/to/{toCode}/rate": {
+      "get": {
+        "tags": [
+          "Mynt"
+        ],
+        "parameters": [
+          {
+            "name": "fromCode",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "toCode",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
     "/api/assets": {
       "post": {
         "tags": [
@@ -773,7 +904,6 @@
       "AssetValueCreateRequest": {
         "required": [
           "assetId",
-          "recordedAt",
           "value"
         ],
         "type": "object",
@@ -787,11 +917,6 @@
             "type": "number",
             "description": "The monetary value of the asset at the recorded time",
             "format": "double"
-          },
-          "recordedAt": {
-            "type": "string",
-            "description": "The date and time when this value was recorded",
-            "format": "date-time"
           }
         },
         "additionalProperties": false,
@@ -832,6 +957,105 @@
         },
         "additionalProperties": false
       },
+      "CurrencyConversionRequest": {
+        "required": [
+          "amount",
+          "fromCurrencyCode",
+          "toCurrencyCode"
+        ],
+        "type": "object",
+        "properties": {
+          "amount": {
+            "minimum": 0.01,
+            "type": "number",
+            "description": "Amount to convert",
+            "format": "double"
+          },
+          "fromCurrencyCode": {
+            "maxLength": 3,
+            "minLength": 0,
+            "type": "string",
+            "description": "Source currency code"
+          },
+          "toCurrencyCode": {
+            "maxLength": 3,
+            "minLength": 0,
+            "type": "string",
+            "description": "Target currency code"
+          }
+        },
+        "additionalProperties": false,
+        "description": "DTO for currency conversion requests"
+      },
+      "CurrencyCreateRequest": {
+        "required": [
+          "code",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "maxLength": 3,
+            "minLength": 0,
+            "type": "string",
+            "description": "ISO 4217 currency code (e.g., USD, EUR, SEK)"
+          },
+          "name": {
+            "maxLength": 100,
+            "minLength": 0,
+            "type": "string",
+            "description": "Full currency name (e.g., US Dollar, Euro, Swedish Krona)"
+          },
+          "symbol": {
+            "maxLength": 10,
+            "minLength": 0,
+            "type": "string",
+            "description": "Currency symbol (e.g., $, €, kr)",
+            "nullable": true
+          },
+          "symbolPosition": {
+            "$ref": "#/components/schemas/SymbolPosition"
+          }
+        },
+        "additionalProperties": false,
+        "description": "DTO for creating new currencies"
+      },
+      "CurrencyExchangeRateRequest": {
+        "required": [
+          "fromCurrencyCode",
+          "rate",
+          "toCurrencyCode"
+        ],
+        "type": "object",
+        "properties": {
+          "fromCurrencyCode": {
+            "maxLength": 3,
+            "minLength": 0,
+            "type": "string",
+            "description": "Source currency code"
+          },
+          "toCurrencyCode": {
+            "maxLength": 3,
+            "minLength": 0,
+            "type": "string",
+            "description": "Target currency code"
+          },
+          "rate": {
+            "type": "number",
+            "description": "Exchange rate (1 FromCurrency = Rate ToCurrency)",
+            "format": "double"
+          },
+          "source": {
+            "maxLength": 50,
+            "minLength": 0,
+            "type": "string",
+            "description": "Source of the rate (API, Manual, etc.)",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "DTO for setting exchange rates"
+      },
       "LoginDto": {
         "type": "object",
         "properties": {
@@ -863,6 +1087,14 @@
           }
         },
         "additionalProperties": false
+      },
+      "SymbolPosition": {
+        "enum": [
+          0,
+          1
+        ],
+        "type": "integer",
+        "format": "int32"
       },
       "UserActivityAction": {
         "enum": [

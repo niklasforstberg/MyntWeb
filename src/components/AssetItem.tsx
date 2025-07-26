@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { useAssetTypes, type AssetType } from '../hooks/useAssetTypes';
 import { useCurrencies, type Currency } from '../hooks/useCurrencies';
 import type { Asset } from '../hooks/useAssets';
+import { formatCurrencyValue } from '../utils/currencyUtils';
 
 interface AssetItemProps {
   asset: Asset;
@@ -90,7 +91,7 @@ const AssetItem = ({ asset, onEdit, onDelete }: AssetItemProps) => {
             </Box>
             {asset.currentValue && (
                 <Typography variant="h6" sx={{ fontWeight: 'bold', mr: 2 }}>
-                {asset.currencyCode || 'USD'} {asset.currentValue}
+                {formatCurrencyValue(asset.currentValue, currencies.find((c: Currency) => c.code === asset.currencyCode))}
                 </Typography>
             )}
         <Box>

@@ -1,8 +1,17 @@
-import { Typography, Paper, List, ListItem, ListItemText, ListItemIcon, Switch } from '@mui/material';
-import { Settings as SettingsIcon, Notifications as NotificationsIcon, Security as SecurityIcon } from '@mui/icons-material';
+import { Typography, Paper, List, ListItem, ListItemText, ListItemIcon, Switch, FormControl, InputLabel, Select, MenuItem, Alert } from '@mui/material';
+import { Settings as SettingsIcon, Notifications as NotificationsIcon, Security as SecurityIcon, CurrencyExchange as CurrencyIcon } from '@mui/icons-material';
 import { ContentBox } from '../theme/styled';
+import { useUserSettings } from '../hooks/useUserSettings';
+import { useCurrencies, type Currency } from '../hooks/useCurrencies';
 
 const Settings = () => {
+  const { data: settings, isLoading: loadingSettings, updateSettings, isUpdating, updateError } = useUserSettings();
+  const { data: currencies = [], isLoading: loadingCurrencies } = useCurrencies();
+
+  const handleCurrencyChange = (currencyCode: string) => {
+    updateSettings({ preferredCurrency: currencyCode });
+  };
+
   return (
     <>
       <ContentBox>
@@ -14,8 +23,41 @@ const Settings = () => {
         </Typography>
       </ContentBox>
 
+      {updateError && (
+        <Alert severity="error" sx={{ mb: 2 }}>
+          Failed to update settings. Please try again.
+        </Alert>
+      )}
+
       <Paper sx={{ maxWidth: 600 }}>
         <List>
+          <ListItem>
+            <ListItemIcon>
+              <CurrencyIcon />
+            </ListItemIcon>
+            <ListItemText 
+              primary="Preferred Currency" 
+              secondary="Currency used for summaries and totals"
+            />
+            <FormControl sx={{ minWidth: 120 }}>
+              <Select
+                value={settings?.preferredCurrency || ''}
+                onChange={(e) => handleCurrencyChange(e.target.value)}
+                disabled={loadingSettings || loadingCurrencies || isUpdating}
+                size="small"
+              >
+                <MenuItem value="">
+                  <em>Select currency</em>
+                </MenuItem>
+                {currencies.map((currency: Currency) => (
+                  <MenuItem key={currency.id} value={currency.code}>
+                    {currency.code} - {currency.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </ListItem>
+          
           <ListItem>
             <ListItemIcon>
               <NotificationsIcon />
