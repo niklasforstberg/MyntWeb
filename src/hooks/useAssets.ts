@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { getAssets } from '../api/axios';
+import { getAssets, getAssetsSummary } from '../api/axios';
 import { useAuth } from '../auth/useAuth';
 
 export interface Asset {
@@ -12,6 +12,12 @@ export interface Asset {
   currencyCode?: string;
 }
 
+export interface AssetsSummary {
+  totalAssets: number;
+  totalValue: number;
+  currencyCode: string;
+}
+
 export const useAssets = () => {
   const { isAuthenticated } = useAuth();
   
@@ -19,6 +25,17 @@ export const useAssets = () => {
     queryKey: ['assets'],
     queryFn: getAssets,
     staleTime: 2 * 60 * 1000, // 2 minutes - assets change more frequently
+    enabled: isAuthenticated, // Only fetch when authenticated
+  });
+};
+
+export const useAssetsSummary = () => {
+  const { isAuthenticated } = useAuth();
+  
+  return useQuery({
+    queryKey: ['assets', 'summary'],
+    queryFn: getAssetsSummary,
+    staleTime: 2 * 60 * 1000, // 2 minutes - summary changes with assets
     enabled: isAuthenticated, // Only fetch when authenticated
   });
 }; 

@@ -2,6 +2,7 @@ import { Box, Typography, IconButton, Dialog, DialogTitle, DialogContent, Dialog
 import { useState } from 'react';
 import { useAssetTypes, type AssetType } from '../hooks/useAssetTypes';
 import { useCurrencies, type Currency } from '../hooks/useCurrencies';
+import { useUpdateAssetValue } from '../hooks/useAssetMutations';
 import type { Asset } from '../hooks/useAssets';
 import { formatCurrencyValue } from '../utils/currencyUtils';
 
@@ -13,6 +14,8 @@ interface AssetItemProps {
 
 const AssetItem = ({ asset, onEdit, onDelete }: AssetItemProps) => {
   const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [isValueEditing, setIsValueEditing] = useState(false);
+  const [inlineValue, setInlineValue] = useState(asset.currentValue || 0);
   const [formData, setFormData] = useState({
     name: asset.name,
     description: asset.description || '',
@@ -20,6 +23,11 @@ const AssetItem = ({ asset, onEdit, onDelete }: AssetItemProps) => {
     assetTypeId: asset.assetTypeId ? String(asset.assetTypeId) : '',
     currencyCode: asset.currencyCode || ''
   });
+
+  // TanStack Query hooks
+  const { data: assetTypes = [], isLoading: loadingAssetTypes } = useAssetTypes();
+  const { data: currencies = [], isLoading: loadingCurrencies } = useCurrencies();
+  const updateAssetValueMutation = useUpdateAssetValue();
 
   // Update form data when asset changes or dialog opens
   const handleDialogOpen = () => {
@@ -32,10 +40,48 @@ const AssetItem = ({ asset, onEdit, onDelete }: AssetItemProps) => {
     });
     setEditDialogOpen(true);
   };
-  
-  // TanStack Query hooks
-  const { data: assetTypes = [], isLoading: loadingAssetTypes } = useAssetTypes();
-  const { data: currencies = [], isLoading: loadingCurrencies } = useCurrencies();
+
+  // Inline value editing handlers
+  const handleValueEditStart = () => {
+    setInlineValue(asset.currentValue || 0);
+    setIsValueEditing(true);
+  };
+
+  const handleValueSave = async () => {
+    try {
+      await updateAssetValueMutation.mutateAsync({ 
+        id: asset.id, 
+        value: inlineValue 
+      });
+      setIsValueEditing(false);
+    } catch (error) {
+      console.error('Failed to update value:', error);
+      // Revert to original value on error
+      setInlineValue(asset.currentValue || 0);
+      setIsValueEditing(false);
+    }
+  };
+
+  const handleValueCancel = () => {
+    setInlineValue(asset.currentValue || 0);
+    setIsValueEditing(false);
+  };
+
+  const handleValueKeyDown = (event: React.KeyboardEvent) => {
+    if (event.key === 'Enter') {
+      handleValueSave();
+    } else if (event.key === 'Escape') {
+      handleValueCancel();
+    }
+  };
+
+  const handleValueChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value;
+    // Only allow numbers, decimal points, and empty string
+    if (value === '' || /^\d*\.?\d*$/.test(value)) {
+      setInlineValue(value === '' ? 0 : Number(value));
+    }
+  };
 
   const handleEdit = async () => {
     try {
@@ -74,14 +120,15 @@ const AssetItem = ({ asset, onEdit, onDelete }: AssetItemProps) => {
           <Box display="flex" justifyContent="space-between" alignItems="center" width="100%">
              <Box display="flex" alignItems="baseline" gap={1} flex={1}>
                 <Typography 
-                  variant="h6" 
+                  variant={asset.name ? "h6" : "body1"}
                   onClick={handleDialogOpen}
                   sx={{ 
                     cursor: 'pointer',
-                    '&:hover': { textDecoration: 'underline' }
+                    '&:hover': { textDecoration: 'underline' },
+                    color: asset.name ? 'inherit' : 'text.secondary'
                   }}
                 >
-                  {asset.name}
+                  {asset.name || 'Unnamed Asset'}
                 </Typography>
                 {asset.description && (
                     <Typography variant="body2" color="text.secondary">
@@ -89,10 +136,45 @@ const AssetItem = ({ asset, onEdit, onDelete }: AssetItemProps) => {
                     </Typography>
                 )}
             </Box>
-            {asset.currentValue && (
-                <Typography variant="h6" sx={{ fontWeight: 'bold', mr: 2 }}>
-                {formatCurrencyValue(asset.currentValue, currencies.find((c: Currency) => c.code === asset.currencyCode))}
-                </Typography>
+            {isValueEditing ? (
+              <TextField
+                type="text"
+                value={inlineValue}
+                onChange={handleValueChange}
+                onBlur={handleValueSave}
+                onKeyDown={handleValueKeyDown}
+                autoFocus
+                size="small"
+                sx={{ 
+                  width: '120px',
+                  mr: 2,
+                  '& .MuiInputBase-input': {
+                    fontSize: '1.25rem',
+                    fontWeight: 'bold',
+                    textAlign: 'right'
+                  }
+                }}
+              />
+            ) : (
+              <Typography 
+                variant="h6" 
+                sx={{ 
+                  fontWeight: 'bold', 
+                  mr: 2,
+                  cursor: 'pointer',
+                  '&:hover': { 
+                    backgroundColor: 'action.hover',
+                    borderRadius: 1,
+                    px: 1
+                  }
+                }}
+                onClick={handleValueEditStart}
+              >
+                {asset.currentValue !== undefined && asset.currentValue !== null
+                  ? formatCurrencyValue(asset.currentValue, currencies.find((c: Currency) => c.code === asset.currencyCode))
+                  : 'No data'
+                }
+              </Typography>
             )}
         <Box>
         </Box>

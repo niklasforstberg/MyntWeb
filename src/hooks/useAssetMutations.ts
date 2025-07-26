@@ -8,7 +8,7 @@ export const useCreateAsset = () => {
   return useMutation({
     mutationFn: createAsset,
     onSuccess: () => {
-      // Invalidate and refetch assets list
+      // Invalidate and refetch assets list and summary
       queryClient.invalidateQueries({ queryKey: ['assets'] });
     },
   });
@@ -28,7 +28,21 @@ export const useUpdateAsset = () => {
       }
     },
     onSuccess: () => {
-      // Invalidate and refetch assets list
+      // Invalidate and refetch assets list and summary
+      queryClient.invalidateQueries({ queryKey: ['assets'] });
+    },
+  });
+};
+
+export const useUpdateAssetValue = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: async ({ id, value }: { id: number; value: number }) => {
+      return updateAssetValue(id, value);
+    },
+    onSuccess: () => {
+      // Invalidate and refetch assets list and summary
       queryClient.invalidateQueries({ queryKey: ['assets'] });
     },
   });
@@ -40,7 +54,7 @@ export const useDeleteAsset = () => {
   return useMutation({
     mutationFn: deleteAsset,
     onSuccess: () => {
-      // Invalidate and refetch assets list
+      // Invalidate and refetch assets list and summary
       queryClient.invalidateQueries({ queryKey: ['assets'] });
     },
   });

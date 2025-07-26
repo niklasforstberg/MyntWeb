@@ -105,6 +105,18 @@
         }
       }
     },
+    "/api/auth/dev/login": {
+      "get": {
+        "tags": [
+          "Mynt"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
     "/api/users/by-email/{email}": {
       "get": {
         "tags": [
@@ -545,6 +557,18 @@
               "format": "int32"
             }
           }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/assets/summary": {
+      "get": {
+        "tags": [
+          "Mynt"
         ],
         "responses": {
           "200": {

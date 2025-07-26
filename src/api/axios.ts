@@ -69,6 +69,11 @@ export const getAssets = async () => {
   return response.data;
 };
 
+export const getAssetsSummary = async () => {
+  const response = await axiosInstance.get('/api/assets/summary');
+  return response.data;
+};
+
 export const createAsset = async (assetData: {
   name: string;
   description?: string;

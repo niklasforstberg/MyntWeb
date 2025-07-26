@@ -1,33 +1,15 @@
 import { Button, Dialog, DialogTitle, DialogContent, DialogActions, TextField, CircularProgress, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
-import type { SelectChangeEvent } from '@mui/material';
-import { useState, useEffect } from 'react';
-import { getAssetTypes } from '../api/axios';
-
-interface Asset {
-  id: number;
-  name: string;
-  description?: string;
-  currentValue?: number;
-  assetTypeId?: number;
-  financialGroupId?: number;
-  currencyCode?: string;
-}
-
-interface AssetType {
-  id: number;
-  name: string;
-  isAsset: boolean;
-  isPhysical: boolean;
-}
+import { useState } from 'react';
+import { useCurrencies, type Currency } from '../hooks/useCurrencies';
+import { useAssetTypes, type AssetType } from '../hooks/useAssetTypes';
+import { useCreateAsset } from '../hooks/useAssetMutations';
 
 interface AddAssetFormProps {
   open: boolean;
   onClose: () => void;
-  onAddAsset: (newAsset: Omit<Asset, 'id'>) => void;
-  creating?: boolean;
 }
 
-const AddAssetForm = ({ open, onClose, onAddAsset, creating = false }: AddAssetFormProps) => {
+const AddAssetForm = ({ open, onClose }: AddAssetFormProps) => {
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -35,26 +17,9 @@ const AddAssetForm = ({ open, onClose, onAddAsset, creating = false }: AddAssetF
     assetTypeId: '',
     currencyCode: ''
   });
-  const [assetTypes, setAssetTypes] = useState<AssetType[]>([]);
-  const [loadingAssetTypes, setLoadingAssetTypes] = useState(false);
-
-  const loadAssetTypes = async () => {
-    try {
-      setLoadingAssetTypes(true);
-      const data = await getAssetTypes();
-      setAssetTypes(data);
-    } catch (error) {
-      console.error('Error loading asset types:', error);
-    } finally {
-      setLoadingAssetTypes(false);
-    }
-  };
-
-  useEffect(() => {
-    if (open) {
-      loadAssetTypes();
-    }
-  }, [open]);
+  const { data: currencies = [] } = useCurrencies();
+  const { data: assetTypes = [], isLoading: loadingAssetTypes } = useAssetTypes();
+  const createAssetMutation = useCreateAsset();
 
   const handleInputChange = (field: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
     setFormData(prev => ({
@@ -70,19 +35,24 @@ const AddAssetForm = ({ open, onClose, onAddAsset, creating = false }: AddAssetF
     }));
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!formData.name.trim()) return;
 
-    onAddAsset({
-      name: formData.name.trim(),
-      description: formData.description.trim() || undefined,
-      currentValue: formData.currentValue ? Number(formData.currentValue) : undefined,
-      assetTypeId: formData.assetTypeId ? Number(formData.assetTypeId) : undefined,
-      currencyCode: formData.currencyCode || undefined
-    });
+    try {
+      await createAssetMutation.mutateAsync({
+        name: formData.name.trim(),
+        description: formData.description.trim() || undefined,
+        initialValue: formData.currentValue ? Number(formData.currentValue) : undefined,
+        assetTypeId: formData.assetTypeId ? Number(formData.assetTypeId) : undefined,
+        currencyCode: formData.currencyCode || undefined
+      });
 
-    // Reset form
-    setFormData({ name: '', description: '', currentValue: '', assetTypeId: '', currencyCode: '' });
+      // Reset form and close dialog
+      setFormData({ name: '', description: '', currentValue: '', assetTypeId: '', currencyCode: '' });
+      onClose();
+    } catch (error) {
+      console.error('Error creating asset:', error);
+    }
   };
 
   const handleClose = () => {
@@ -116,7 +86,7 @@ const AddAssetForm = ({ open, onClose, onAddAsset, creating = false }: AddAssetF
             <MenuItem value="">
               <em>Select an asset type</em>
             </MenuItem>
-            {assetTypes.map((type) => (
+            {assetTypes.map((type: AssetType) => (
               <MenuItem key={type.id} value={type.id}>
                 {type.name}
               </MenuItem>
@@ -129,7 +99,7 @@ const AddAssetForm = ({ open, onClose, onAddAsset, creating = false }: AddAssetF
           label="Description (Optional)"
           fullWidth
           multiline
-          rows={3}
+          rows={2}
           variant="outlined"
           value={formData.description}
           onChange={handleInputChange('description')}
@@ -156,17 +126,11 @@ const AddAssetForm = ({ open, onClose, onAddAsset, creating = false }: AddAssetF
             <MenuItem value="">
               <em>Select currency</em>
             </MenuItem>
-            <MenuItem value="USD">USD - US Dollar</MenuItem>
-            <MenuItem value="EUR">EUR - Euro</MenuItem>
-            <MenuItem value="SEK">SEK - Swedish Krona</MenuItem>
-            <MenuItem value="GBP">GBP - British Pound</MenuItem>
-            <MenuItem value="JPY">JPY - Japanese Yen</MenuItem>
-            <MenuItem value="CAD">CAD - Canadian Dollar</MenuItem>
-            <MenuItem value="AUD">AUD - Australian Dollar</MenuItem>
-            <MenuItem value="CHF">CHF - Swiss Franc</MenuItem>
-            <MenuItem value="CNY">CNY - Chinese Yuan</MenuItem>
-            <MenuItem value="NOK">NOK - Norwegian Krone</MenuItem>
-            <MenuItem value="DKK">DKK - Danish Krone</MenuItem>
+            {currencies.map((currency: Currency) => (
+              <MenuItem key={currency.id} value={currency.code}>
+                {currency.code} - {currency.name}
+              </MenuItem>
+            ))}
           </Select>
         </FormControl>
       </DialogContent>
@@ -175,9 +139,9 @@ const AddAssetForm = ({ open, onClose, onAddAsset, creating = false }: AddAssetF
         <Button 
           onClick={handleSubmit} 
           variant="contained"
-          disabled={!formData.name.trim() || creating}
+          disabled={!formData.name.trim() || createAssetMutation.isPending}
         >
-          {creating ? <CircularProgress size={20} /> : 'Create Asset'}
+          {createAssetMutation.isPending ? <CircularProgress size={20} /> : 'Create Asset'}
         </Button>
       </DialogActions>
     </Dialog>

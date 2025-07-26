@@ -2,9 +2,10 @@ import { Typography, Button } from '@mui/material';
 import { useState } from 'react';
 import { ContentBox, FlexBetween } from '../theme/styled';
 import AssetList from '../components/AssetList';
+import AssetSummary from '../components/AssetSummary';
 import AddAssetForm from '../components/AddAssetForm';
-import { useAssets } from '../hooks/useAssets';
-import { useCreateAsset, useUpdateAsset, useDeleteAsset } from '../hooks/useAssetMutations';
+import { useAssets, useAssetsSummary } from '../hooks/useAssets';
+import { useUpdateAsset, useDeleteAsset } from '../hooks/useAssetMutations';
 import type { Asset } from '../hooks/useAssets';
 
 const Assets = () => {
@@ -12,25 +13,9 @@ const Assets = () => {
   
   // TanStack Query hooks
   const { data: assets = [], isLoading, error } = useAssets();
-  const createAssetMutation = useCreateAsset();
+  const { data: summary, isLoading: summaryLoading } = useAssetsSummary();
   const updateAssetMutation = useUpdateAsset();
   const deleteAssetMutation = useDeleteAsset();
-
-  const handleAddAsset = async (newAsset: Omit<Asset, 'id'>) => {
-    try {
-      await createAssetMutation.mutateAsync({
-        name: newAsset.name,
-        description: newAsset.description,
-        assetTypeId: newAsset.assetTypeId,
-        financialGroupId: newAsset.financialGroupId,
-        currencyCode: newAsset.currencyCode,
-        initialValue: newAsset.currentValue
-      });
-      setAddFormOpen(false);
-    } catch (err) {
-      console.error('Error creating asset:', err);
-    }
-  };
 
   const handleEditAsset = async (id: number, updatedData: Partial<Asset>) => {
     try {
@@ -81,19 +66,25 @@ const Assets = () => {
         )}
 
         {!isLoading && !error && (
-          <AssetList 
-            assets={assets}
-            onEditAsset={handleEditAsset}
-            onDeleteAsset={handleDeleteAsset}
-          />
+          <>
+            <AssetList 
+              assets={assets}
+              onEditAsset={handleEditAsset}
+              onDeleteAsset={handleDeleteAsset}
+            />
+            
+            {summary && !summaryLoading && (
+              <AssetSummary 
+                summary={summary}
+              />
+            )}
+          </>
         )}
       </ContentBox>
 
       <AddAssetForm 
         open={addFormOpen}
         onClose={() => setAddFormOpen(false)}
-        onAddAsset={handleAddAsset}
-        creating={createAssetMutation.isPending}
       />
     </>
   );
