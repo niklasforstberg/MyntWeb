@@ -14,7 +14,9 @@ export const useUserSettings = () => {
     queryKey: ['userSettings'],
     queryFn: getUserSettings,
     staleTime: 5 * 60 * 1000, // 5 minutes
-    enabled: isAuthenticated, // Only fetch when authenticated
+    enabled: isAuthenticated, // Re-enable now that backend is fixed
+    retry: 1, // Retry once on failure
+    refetchOnWindowFocus: false, // Don't refetch when window gains focus
   });
 
   const mutation = useMutation({

@@ -33,7 +33,7 @@ const AssetSummary = ({ assets }: AssetSummaryProps) => {
         <FlexBetween>
           <Typography variant="h6">Total Value</Typography>
           <Typography variant="h4" sx={{ fontFamily: 'Eczar' }}>
-            {formatCurrencyValue(totalValue, currencies.find((c: Currency) => c.code === settings?.preferredCurrency))}
+            {formatCurrencyValue(totalValue, currencies.find((c: Currency) => c.code === settings?.preferredCurrency || 'USD'))}
           </Typography>
         </FlexBetween>
         <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>

@@ -32,7 +32,6 @@ axiosInstance.interceptors.response.use(
   (error) => {
     // Handle authentication errors
     if (error.response?.status === 401 || error.response?.status === 403) {
-      console.log('Authentication error detected, clearing token');
       clearToken();
       // Redirect to login if we're not already there
       if (window.location.pathname !== '/login') {

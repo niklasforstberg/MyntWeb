@@ -32,25 +32,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   useEffect(() => {
     const checkAuth = () => {
-      console.log('AuthContext: Checking authentication...');
-      
       if (isTokenValid()) { 
-        console.log('AuthContext: Token is valid');
         const email = getUserEmail();
         const role = getUserRole();
-        console.log('AuthContext: Email:', email, 'Role:', role);
         
         if (email && role) {
           setIsAuthenticated(true);
           setUserEmail(email);
           setUserRole(role);
-          console.log('AuthContext: Set userEmail to:', email);
         } else {
-          console.log('AuthContext: Could not get user info from token');
           handleLogout();
         }
       } else {
-        console.log('AuthContext: Token is invalid or missing');
         handleLogout();
       }
       setIsLoading(false);

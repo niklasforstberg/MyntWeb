@@ -365,6 +365,30 @@
         }
       }
     },
+    "/api/currencies/update-rates": {
+      "post": {
+        "tags": [
+          "Mynt"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/currencies/update-status": {
+      "get": {
+        "tags": [
+          "Mynt"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
     "/api/currencies/convert": {
       "post": {
         "tags": [
