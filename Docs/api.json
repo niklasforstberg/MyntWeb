@@ -197,6 +197,14 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "name": "isAsset",
+            "in": "query",
+            "style": "form",
+            "schema": {
+              "type": "boolean"
+            }
           }
         ],
         "responses": {
@@ -480,6 +488,16 @@
         "tags": [
           "Mynt"
         ],
+        "parameters": [
+          {
+            "name": "isAsset",
+            "in": "query",
+            "style": "form",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "Success"
@@ -569,6 +587,38 @@
       "get": {
         "tags": [
           "Mynt"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/assets/snapshots": {
+      "get": {
+        "tags": [
+          "Mynt"
+        ],
+        "parameters": [
+          {
+            "name": "fromDate",
+            "in": "query",
+            "style": "form",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "toDate",
+            "in": "query",
+            "style": "form",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
         ],
         "responses": {
           "200": {
