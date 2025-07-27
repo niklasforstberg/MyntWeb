@@ -12,7 +12,7 @@ const Assets = () => {
   const [addFormOpen, setAddFormOpen] = useState(false);
   
   // TanStack Query hooks
-  const { data: assets = [], isLoading, error } = useAssets();
+  const { data: assets = [], isLoading, error } = useAssets(true); // Only get assets, not debts
   const { data: summary, isLoading: summaryLoading } = useAssetsSummary();
   const updateAssetMutation = useUpdateAsset();
   const deleteAssetMutation = useDeleteAsset();
@@ -75,7 +75,10 @@ const Assets = () => {
             
             {summary && !summaryLoading && (
               <AssetSummary 
-                summary={summary}
+                summary={{
+                  ...summary,
+                  totalSummary: summary.assetSummary // Use only asset summary, not total
+                }}
               />
             )}
           </>

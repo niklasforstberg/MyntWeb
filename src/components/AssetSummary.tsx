@@ -1,20 +1,36 @@
 import { Box, Typography } from '@mui/material';
-import { TrendingUp } from '@mui/icons-material';
-import type { AssetsSummary } from '../hooks/useAssets';
+import type { AssetSummaryResponse } from '../hooks/useAssets';
 
 interface AssetSummaryProps {
-  summary: AssetsSummary;
+  summary: AssetSummaryResponse;
 }
 
 const AssetSummary = ({ summary }: AssetSummaryProps) => {
   const formatCurrency = (value: number, currencyCode: string) => {
     return new Intl.NumberFormat('sv-SE', {
       style: 'currency',
-      currency: currencyCode || 'USD',
+      currency: currencyCode,
       minimumFractionDigits: 0,
       maximumFractionDigits: 2,
     }).format(value);
   };
+
+  // Defensive programming - check if summary exists
+  if (!summary) {
+    return (
+      <Box sx={{ 
+        display: 'flex', 
+        justifyContent: 'flex-end', 
+        alignItems: 'center',
+        gap: 1,
+        mt: 2
+      }}>
+        <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+          Total: Loading...
+        </Typography>
+      </Box>
+    );
+  }
 
   return (
     <Box sx={{ 
@@ -25,7 +41,7 @@ const AssetSummary = ({ summary }: AssetSummaryProps) => {
       mt: 2
     }}>
       <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-        Total: {formatCurrency(summary.totalValue, summary.currencyCode)}
+        Total: {formatCurrency(summary.totalSummary, summary.currencyCode)}
       </Typography>
     </Box>
   );

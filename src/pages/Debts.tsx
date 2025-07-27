@@ -5,30 +5,22 @@ import AssetList from '../components/AssetList';
 import AssetSummary from '../components/AssetSummary';
 import AddDebtForm from '../components/AddDebtForm';
 import { useAssets, useAssetsSummary } from '../hooks/useAssets';
-import { useAssetTypes } from '../hooks/useAssetTypes';
 import { useUpdateAsset, useDeleteAsset } from '../hooks/useAssetMutations';
 import type { Asset } from '../hooks/useAssets';
-import type { AssetType } from '../hooks/useAssetTypes';
 
 const Debts = () => {
   const [addFormOpen, setAddFormOpen] = useState(false);
   
-  // TanStack Query hooks - filter for debts (isAsset=false)
-  const { data: allAssets = [], isLoading, error } = useAssets();
+  // TanStack Query hooks - get debts only (isAsset=false)
+  const { data: debts = [], isLoading, error } = useAssets(false); // Only get debts, not assets
   const { data: allSummary, isLoading: summaryLoading } = useAssetsSummary();
-  const { data: assetTypes = [] } = useAssetTypes();
   const updateAssetMutation = useUpdateAsset();
   const deleteAssetMutation = useDeleteAsset();
 
-  // Filter for debts only by checking asset type
-  const debts = allAssets.filter((asset: Asset) => {
-    const assetType = assetTypes.find((type: AssetType) => type.id === asset.assetTypeId);
-    return assetType && !assetType.isAsset;
-  });
+  // Create debt summary from the overall summary
   const debtSummary = allSummary ? {
     ...allSummary,
-    totalValue: allSummary.totalValue * -1, // Make negative for debts
-    totalCount: debts.length
+    totalSummary: allSummary.debtSummary * -1 // Make negative for debts
   } : null;
 
   const handleEditDebt = async (id: number, updatedData: Partial<Asset>) => {

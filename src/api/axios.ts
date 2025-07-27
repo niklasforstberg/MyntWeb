@@ -64,8 +64,9 @@ export const getCurrentUser = async () => {
   return response.data;
 };
 
-export const getAssets = async () => {
-  const response = await axiosInstance.get('/api/assets');
+export const getAssets = async (isAsset?: boolean) => {
+  const params = isAsset !== undefined ? { isAsset } : {};
+  const response = await axiosInstance.get('/api/assets', { params });
   return response.data;
 };
 

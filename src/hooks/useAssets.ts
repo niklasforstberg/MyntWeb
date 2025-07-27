@@ -18,12 +18,22 @@ export interface AssetsSummary {
   currencyCode: string;
 }
 
-export const useAssets = () => {
+export interface AssetSummaryResponse {
+  assetSummary: number;
+  assetCount: number;
+  debtSummary: number;
+  debtCount: number;
+  totalSummary: number;
+  lastUpdated: string;
+  currencyCode: string;
+}
+
+export const useAssets = (isAsset?: boolean) => {
   const { isAuthenticated } = useAuth();
   
   return useQuery({
-    queryKey: ['assets'],
-    queryFn: getAssets,
+    queryKey: ['assets', isAsset],
+    queryFn: () => getAssets(isAsset),
     staleTime: 2 * 60 * 1000, // 2 minutes - assets change more frequently
     enabled: isAuthenticated, // Only fetch when authenticated
   });
@@ -32,7 +42,7 @@ export const useAssets = () => {
 export const useAssetsSummary = () => {
   const { isAuthenticated } = useAuth();
   
-  return useQuery({
+  return useQuery<AssetSummaryResponse>({
     queryKey: ['assets', 'summary'],
     queryFn: getAssetsSummary,
     staleTime: 2 * 60 * 1000, // 2 minutes - summary changes with assets

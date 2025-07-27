@@ -29,6 +29,13 @@ const AssetItem = ({ asset, onEdit, onDelete }: AssetItemProps) => {
   const { data: currencies = [], isLoading: loadingCurrencies } = useCurrencies();
   const updateAssetValueMutation = useUpdateAssetValue();
 
+  // Determine if this asset is a debt or asset based on its asset type
+  const currentAssetType = assetTypes.find((type: AssetType) => type.id === asset.assetTypeId);
+  const isDebt = currentAssetType ? !currentAssetType.isAsset : false;
+  
+  // Filter asset types based on whether this is a debt or asset
+  const filteredAssetTypes = assetTypes.filter((type: AssetType) => type.isAsset === !isDebt);
+
   // Update form data when asset changes or dialog opens
   const handleDialogOpen = () => {
     setFormData({
@@ -205,7 +212,7 @@ const AssetItem = ({ asset, onEdit, onDelete }: AssetItemProps) => {
               <MenuItem value="">
                 <em>Select an asset type</em>
               </MenuItem>
-              {assetTypes.map((type: AssetType) => (
+              {filteredAssetTypes.map((type: AssetType) => (
                 <MenuItem key={type.id} value={type.id}>
                   {type.name}
                 </MenuItem>
