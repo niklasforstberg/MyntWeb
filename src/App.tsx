@@ -10,6 +10,7 @@ import Login from './pages/Login';
 import Layout from './components/Layout';
 import Dashboard from './pages/Dashboard';
 import Assets from './pages/Assets';
+import Debts from './pages/Debts';
 import Analytics from './pages/Analytics';
 import Settings from './pages/Settings';
 
@@ -46,6 +47,14 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <Assets />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/debts"
+                element={
+                  <ProtectedRoute>
+                    <Debts />
                   </ProtectedRoute>
                 }
               />

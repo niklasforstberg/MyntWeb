@@ -9,12 +9,12 @@ export interface AssetType {
   isPhysical: boolean;
 }
 
-export const useAssetTypes = () => {
+export const useAssetTypes = (isAsset?: boolean) => {
   const { isAuthenticated } = useAuth();
   
   return useQuery({
-    queryKey: ['assetTypes'],
-    queryFn: getAssetTypes,
+    queryKey: ['assetTypes', isAsset],
+    queryFn: () => getAssetTypes(isAsset),
     staleTime: 5 * 60 * 1000, // 5 minutes
     enabled: isAuthenticated, // Only fetch when authenticated
   });

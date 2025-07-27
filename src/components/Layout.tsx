@@ -35,6 +35,7 @@ interface LayoutProps {
 const menuItems = [
   { text: 'Dashboard', icon: <DashboardIcon />, path: '/dashboard' },
   { text: 'Assets', icon: <AssetsIcon />, path: '/assets' },
+  { text: 'Debts', icon: <AssetsIcon />, path: '/debts' },
   { text: 'Analytics', icon: <AnalyticsIcon />, path: '/analytics' },
   { text: 'Settings', icon: <SettingsIcon />, path: '/settings' },
 ];
@@ -124,9 +125,6 @@ const Layout = ({ children }: LayoutProps) => {
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" noWrap component="div">
-            {menuItems.find(item => item.path === location.pathname)?.text || 'Mynt'}
-          </Typography>
         </Toolbar>
       </AppBar>
 

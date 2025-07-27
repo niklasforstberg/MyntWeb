@@ -4,12 +4,12 @@ import { useCurrencies, type Currency } from '../hooks/useCurrencies';
 import { useAssetTypes, type AssetType } from '../hooks/useAssetTypes';
 import { useCreateAsset } from '../hooks/useAssetMutations';
 
-interface AddAssetFormProps {
+interface AddDebtFormProps {
   open: boolean;
   onClose: () => void;
 }
 
-const AddAssetForm = ({ open, onClose }: AddAssetFormProps) => {
+const AddDebtForm = ({ open, onClose }: AddDebtFormProps) => {
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -18,7 +18,7 @@ const AddAssetForm = ({ open, onClose }: AddAssetFormProps) => {
     currencyCode: ''
   });
   const { data: currencies = [] } = useCurrencies();
-  const { data: assetTypes = [], isLoading: loadingAssetTypes } = useAssetTypes(true); // Only show assets, not debts
+  const { data: debtTypes = [], isLoading: loadingDebtTypes } = useAssetTypes(false); // Only show debts, not assets
   const createAssetMutation = useCreateAsset();
 
   const handleInputChange = (field: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -51,7 +51,7 @@ const AddAssetForm = ({ open, onClose }: AddAssetFormProps) => {
       setFormData({ name: '', description: '', currentValue: '', assetTypeId: '', currencyCode: '' });
       onClose();
     } catch (error) {
-      console.error('Error creating asset:', error);
+      console.error('Error creating debt:', error);
     }
   };
 
@@ -62,12 +62,12 @@ const AddAssetForm = ({ open, onClose }: AddAssetFormProps) => {
 
   return (
     <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
-      <DialogTitle>Add New Asset</DialogTitle>
+      <DialogTitle>Add New Debt</DialogTitle>
       <DialogContent>
         <TextField
           autoFocus
           margin="dense"
-          label="Asset Name"
+          label="Debt Name"
           fullWidth
           variant="outlined"
           value={formData.name}
@@ -76,17 +76,17 @@ const AddAssetForm = ({ open, onClose }: AddAssetFormProps) => {
         />
         
         <FormControl fullWidth sx={{ mb: 2 }}>
-          <InputLabel>Asset Type</InputLabel>
+          <InputLabel>Debt Type</InputLabel>
           <Select
             value={formData.assetTypeId}
-            label="Asset Type"
+            label="Debt Type"
             onChange={handleSelectChange('assetTypeId')}
-            disabled={loadingAssetTypes}
+            disabled={loadingDebtTypes}
           >
             <MenuItem value="">
-              <em>Select an asset type</em>
+              <em>Select a debt type</em>
             </MenuItem>
-            {assetTypes.map((type: AssetType) => (
+            {debtTypes.map((type: AssetType) => (
               <MenuItem key={type.id} value={type.id}>
                 {type.name}
               </MenuItem>
@@ -107,7 +107,7 @@ const AddAssetForm = ({ open, onClose }: AddAssetFormProps) => {
         />
         <TextField
           margin="dense"
-          label="Current Value (Optional)"
+          label="Current Balance (Optional)"
           type="number"
           fullWidth
           variant="outlined"
@@ -140,12 +140,18 @@ const AddAssetForm = ({ open, onClose }: AddAssetFormProps) => {
           onClick={handleSubmit} 
           variant="contained"
           disabled={!formData.name.trim() || createAssetMutation.isPending}
+          sx={{
+            backgroundColor: 'error.main',
+            '&:hover': {
+              backgroundColor: 'error.dark',
+            }
+          }}
         >
-          {createAssetMutation.isPending ? <CircularProgress size={20} /> : 'Create Asset'}
+          {createAssetMutation.isPending ? <CircularProgress size={20} /> : 'Create Debt'}
         </Button>
       </DialogActions>
     </Dialog>
   );
 };
 
-export default AddAssetForm; 
+export default AddDebtForm; 
