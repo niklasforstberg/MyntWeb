@@ -890,6 +890,10 @@
             "type": "boolean",
             "description": "Whether this is a physical asset"
           },
+          "isLiquid": {
+            "type": "boolean",
+            "description": "Whether this asset type is easily convertible to cash"
+          },
           "translations": {
             "type": "object",
             "additionalProperties": {
@@ -928,6 +932,10 @@
           "isPhysical": {
             "type": "boolean",
             "description": "Whether this is a physical asset"
+          },
+          "isLiquid": {
+            "type": "boolean",
+            "description": "Whether this asset type is easily convertible to cash"
           }
         },
         "additionalProperties": false,
@@ -949,6 +957,11 @@
           "isPhysical": {
             "type": "boolean",
             "description": "Indicates whether this asset type is physical or digital",
+            "nullable": true
+          },
+          "isLiquid": {
+            "type": "boolean",
+            "description": "Indicates whether this asset type is easily convertible to cash",
             "nullable": true
           },
           "translations": {
